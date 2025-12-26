@@ -1,4 +1,4 @@
-﻿using GameConsole;
+using GameConsole;
 using UnityEngine.UI;
 using plog.Models;
 using Colors = ArchipelagoULTRAKILL.Structures.Colors;

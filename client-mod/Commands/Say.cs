@@ -1,4 +1,4 @@
-﻿using Archipelago.MultiClient.Net.Packets;
+using Archipelago.MultiClient.Net.Packets;
 using GameConsole;
 using plog.Models;
 

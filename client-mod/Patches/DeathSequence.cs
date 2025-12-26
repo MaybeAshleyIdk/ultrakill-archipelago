@@ -1,4 +1,4 @@
-﻿using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using ArchipelagoULTRAKILL.Components;
 using HarmonyLib;
 using UnityEngine;

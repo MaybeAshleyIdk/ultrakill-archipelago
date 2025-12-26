@@ -1,4 +1,4 @@
-﻿using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.Components;
 using HarmonyLib;
 
 namespace ArchipelagoULTRAKILL.Patches

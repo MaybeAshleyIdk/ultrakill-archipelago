@@ -1,4 +1,4 @@
-﻿using ArchipelagoULTRAKILL.Structures;
+using ArchipelagoULTRAKILL.Structures;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

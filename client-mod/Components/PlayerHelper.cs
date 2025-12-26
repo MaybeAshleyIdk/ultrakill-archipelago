@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using UnityEngine;
 using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Powerups;

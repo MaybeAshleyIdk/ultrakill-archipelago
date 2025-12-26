@@ -1,4 +1,4 @@
-﻿using ArchipelagoULTRAKILL.Structures;
+using ArchipelagoULTRAKILL.Structures;
 using Discord;
 using UnityEngine;
 using UnityEngine.UI;

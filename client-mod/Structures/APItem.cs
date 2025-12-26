@@ -1,4 +1,4 @@
-﻿using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Enums;
 
 namespace ArchipelagoULTRAKILL.Structures
 {

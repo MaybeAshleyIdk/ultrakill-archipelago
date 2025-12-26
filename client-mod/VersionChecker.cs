@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using PluginConfig.API.Decorators;
 using System.Collections;
 using UnityEngine.Networking;

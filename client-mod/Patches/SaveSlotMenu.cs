@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using Newtonsoft.Json;
 using System.IO;
 

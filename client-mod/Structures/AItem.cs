@@ -1,4 +1,4 @@
-﻿namespace ArchipelagoULTRAKILL.Structures
+namespace ArchipelagoULTRAKILL.Structures
 {
     public abstract class AItem
     {

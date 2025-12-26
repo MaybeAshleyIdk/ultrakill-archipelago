@@ -1,4 +1,4 @@
-﻿namespace ArchipelagoULTRAKILL
+namespace ArchipelagoULTRAKILL
 {
     public class WeaponLoadout
     {

@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Android;

@@ -1,4 +1,4 @@
-﻿using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.Components;
 using UnityEngine;
 
 namespace ArchipelagoULTRAKILL.Powerups

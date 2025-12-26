@@ -1,4 +1,4 @@
-﻿using ArchipelagoULTRAKILL.Structures;
+using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Components;
 using HarmonyLib;
 using System;

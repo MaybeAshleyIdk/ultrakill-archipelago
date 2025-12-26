@@ -1,4 +1,4 @@
-﻿using GameConsole;
+using GameConsole;
 using plog.Models;
 
 namespace ArchipelagoULTRAKILL.Commands
