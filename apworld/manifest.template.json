@@ -1,0 +1,6 @@
+{
+	"game": "ULTRAKILL",
+	"minimum_ap_version": "0.6.4",
+	"world_version": "{{VERSION}}",
+	"authors": ["TRPG0", "KernRat", "BeowulfDragon"]
+}

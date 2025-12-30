@@ -65,6 +65,8 @@ class Environment:
 	version_file_path: Path = script_dir_path / ".." / "version.txt"
 	version_python_file_path: Path = source_dir_path / "version.py"
 
+	manifest_file_path: Path = build_dir_path / "manifest.json"
+
 	base_apworlds_output_dir_path: Path = script_dir_path / "output"
 	apworld_output_file_path: Path = (base_apworlds_output_dir_path /
 	                                  f"archipelago-{ARCHIPELAGO_VERSION}" /
@@ -459,6 +461,52 @@ version_python_file_target = VersionPythonFileTarget()
 
 
 # endregion
+# region target: manifest file
+
+
+class ManifestFileTarget(Target):
+
+	def __init__(self) -> None:
+		super().__init__(
+			name="manifest_file",
+			dependencies=(),
+		)
+
+	@override
+	def _is_up_to_date(self, environment: Environment) -> bool:
+		manifest_file_mtime: int
+		try:
+			manifest_file_mtime = environment.manifest_file_path.stat().st_mtime_ns
+		except FileNotFoundError:
+			return False
+
+		version_file_mtime: int = environment.version_file_path.stat().st_mtime_ns
+
+		return manifest_file_mtime > version_file_mtime
+
+	@override
+	def _build(self, environment: Environment) -> None:
+		version: str = environment.version_file_path.read_text(encoding="utf-8").strip()
+
+		manifest: str = (environment.script_dir_path / "manifest.template.json") \
+			.read_text(encoding="utf-8") \
+			.replace("{{VERSION}}", version)
+
+		environment.manifest_file_path.parent.mkdir(parents=True, exist_ok=True)
+		environment.manifest_file_path.write_text(manifest, encoding="utf-8")
+
+	@override
+	def clean(self, environment: Environment) -> None:
+		try:
+			os.remove(environment.manifest_file_path)
+		except FileNotFoundError:
+			pass
+
+
+manifest_file_target = ManifestFileTarget()
+
+
+# endregion
 # region target: apworld
 
 
@@ -468,7 +516,7 @@ class ApWorldTarget(Target):
 	def __init__(self) -> None:
 		super().__init__(
 			name="apworld",
-			dependencies=(archipelago_virtual_environment_target, version_python_file_target),
+			dependencies=(archipelago_virtual_environment_target, version_python_file_target, manifest_file_target),
 		)
 
 	@override
@@ -518,6 +566,8 @@ class ApWorldTarget(Target):
 				environment.script_dir_path / "docs",
 				tmp_dir_path / "worlds" / APWORLD_NAME / "docs",
 			)
+
+			shutil.copy(environment.manifest_file_path, tmp_dir_path / "worlds" / APWORLD_NAME / "archipelago.json")
 
 			process: CompletedProcess = subprocess.run(
 				args=(venv_exec_cmd, str(ApWorldTarget._relative_launcher_file_path), "Build APWorlds", "ULTRAKILL"),
@@ -747,6 +797,7 @@ ALL_TARGETS: Sequence[Target] = (
 	archipelago_source_directory_target,
 	archipelago_virtual_environment_target,
 	version_python_file_target,
+	manifest_file_target,
 	apworld_target,
 	test_suite_target,
 )
