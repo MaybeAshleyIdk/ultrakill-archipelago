@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Components;
 using HarmonyLib;
@@ -63,8 +68,6 @@ namespace ArchipelagoULTRAKILL
 
         public void CreateLogObject()
         {
-            StartCoroutine(VersionChecker.CheckVersion());
-
             lines = ConfigManager.logLines.value;
 
             GameConsole.Console.Instance.RegisterCommand(new Commands.Connect());

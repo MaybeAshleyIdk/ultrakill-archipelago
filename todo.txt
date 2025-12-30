@@ -1,0 +1,8 @@
+* Fix the failing test
+* Tweak the Gabriel fights logic a bit (on Brutal difficulty it requires either at least 2 stamina bars or a rocket launcher)
+* Add a YAML option to add completing a mission as a location/check
+* Add a GitHub Pages homepage for a more user-friendly setup guide
+* Create data files that describe the mission structure and location/check availability and use it to generate code for
+  both the APWorld and the client mod
+* Figure out a way to automate building the the Unity asset bundle (i.e.: build it without Unity)
+* Code cleanups and refactors

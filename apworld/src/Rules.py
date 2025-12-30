@@ -1,3 +1,6 @@
+# Copyright (c) 2023-2025 Trevor L
+# SPDX-License-Identifier: MIT
+
 from worlds.generic.Rules import add_rule
 from BaseClasses import CollectionState
 from typing import Callable, Dict, TYPE_CHECKING

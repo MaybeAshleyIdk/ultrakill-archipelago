@@ -1,3 +1,6 @@
+# Copyright (c) 2023-2025 Trevor L
+# SPDX-License-Identifier: MIT
+
 from typing import Dict, List, Any, Union
 from BaseClasses import Region, Location, Item, Tutorial, ItemClassification
 from Options import OptionError
@@ -8,17 +11,18 @@ from .Regions import Regions, SecretRegion
 from .Rules import UltrakillRules
 from .Options import UltrakillOptions
 from .Music import multilayer_music, singlelayer_music, ordered_list
+from .version import VERSION
 
 
 class UltrakillWeb(WebWorld):
     # theme = ""
     tutorials = [Tutorial(
-        "Multiworld Setup Guide",
-        "A guide to setting up ULTRAKILL randomizer and connecting to an Archipelago Multiworld",
+        "Setup Guide",
+        "A guide for setting up ULTRAKILL for Archipelago",
         "English",
         "setup_en.md",
         "setup/en",
-        ["TRPG"]
+        ["MaybeAshleyIdk"]
     )]
 
 
@@ -444,7 +448,7 @@ class UltrakillWorld(World):
 
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data: Dict[str, Any] = {
-            "version": "3.2.6",
+            "version": VERSION,
             "locations": self.game_id_to_long,
             "start": self.start_level.short_name,
             "goal": self.goal_level.short_name,

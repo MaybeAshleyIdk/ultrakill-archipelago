@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="ULTRAKILL Archipelago APWorld Files" pattern="file:apworld/src//*" />
+</component>

@@ -1,3 +1,6 @@
+# Copyright (c) 2023-2025 Trevor L
+# SPDX-License-Identifier: MIT
+
 from . import UltrakillTestBase
 from ..Items import item_list, fire2_weapons, item_groups, ItemType
 from ..Locations import location_list, LocationType

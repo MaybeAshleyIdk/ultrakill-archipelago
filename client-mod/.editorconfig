@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: CC0-1.0
+
+[*.cs]
+indent_style = space
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+[*.resx]
+indent_style = space
+indent_size = 2
+insert_final_newline = false
+trim_trailing_whitespace = false

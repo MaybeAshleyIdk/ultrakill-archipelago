@@ -1,0 +1,10 @@
+{
+	"name": "{{NAME}}",
+	"version_number": "{{VERSION}}",
+	"website_url": "https://github.com/MaybeAshleyIdk/ultrakill-archipelago#readme",
+	"description": "{{DESCRIPTION}}",
+	"dependencies": [
+		"BepInEx-BepInExPack-5.4.2304",
+		"EternalsTeam-PluginConfigurator-{{PLUGIN_CONFIGURATOR_VERSION}}"
+	]
+}

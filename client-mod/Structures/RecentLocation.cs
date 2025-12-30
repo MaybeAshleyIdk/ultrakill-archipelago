@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using Archipelago.MultiClient.Net.Enums;
 using System;
 using UnityEngine;

@@ -1,3 +1,6 @@
+# Copyright (c) 2023-2025 Trevor L
+# SPDX-License-Identifier: MIT
+
 from typing import List
 from dataclasses import dataclass
 

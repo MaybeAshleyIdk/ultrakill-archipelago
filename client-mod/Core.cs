@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Text;
@@ -19,13 +24,14 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace ArchipelagoULTRAKILL
 {
-    [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("com.eternalUnion.pluginConfigurator")]
+    [BepInIncompatibility("trpg.archipelagoultrakill")]
     public class Core : BaseUnityPlugin
     {
-        public const string PluginGUID = "trpg.archipelagoultrakill";
-        public const string PluginName = "Archipelago";
-        public const string PluginVersion = "3.2.6";
+        public const string PluginGUID = MyPluginInfo.PLUGIN_GUID;
+        public const string PluginName = MyPluginInfo.PLUGIN_NAME;
+        public const string PluginVersion = MyPluginInfo.PLUGIN_VERSION;
 
         public static string workingPath;
         public static string workingDir;

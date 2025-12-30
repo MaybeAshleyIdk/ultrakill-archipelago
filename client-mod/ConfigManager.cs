@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using PluginConfig.API;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Fields;
@@ -101,7 +106,6 @@ namespace ArchipelagoULTRAKILL
         public static ColorField confusionColor;
         public static ColorField trapColor;
 
-        public static ConfigPanel linksPanel;
         public static ButtonField thunderstoreButton;
         public static ButtonField githubButton;
         public static ButtonField discordButton;
@@ -123,7 +127,6 @@ namespace ArchipelagoULTRAKILL
             new ConfigHeader(config.rootPanel, "---");
             uiPanel = new ConfigPanel(config.rootPanel, "UI SETTINGS", "uiPanel");
             colorPanel = new ConfigPanel(config.rootPanel, "COLOR SETTINGS", "colorPanel");
-            linksPanel = new ConfigPanel(config.rootPanel, "LINKS", "linksPanel");
 
             // player settings
             isConnected = new BoolField(playerPanel, "CONNECTED TO SERVER?", "isConnected", false, false);
@@ -370,16 +373,6 @@ namespace ArchipelagoULTRAKILL
             doublejumpColor = new ColorField(colorPanel, "AIR JUMP", "doublejumpColor", new Color(1, 1, 0.6f), true);
             confusionColor = new ColorField(colorPanel, "CONFUSING AURA", "confusionColor", new Color(0.8242f, 1, 0.1289f), true);
             trapColor = new ColorField(colorPanel, "TRAP", "trapColor", new Color(0.7f, 0.7f, 0.7f), true);
-
-            // links
-            thunderstoreButton = new ButtonField(linksPanel, "THUNDERSTORE", "thunderstoreButton");
-            thunderstoreButton.onClick += () => { Application.OpenURL("https://thunderstore.io/c/ultrakill/p/TRPG/Archipelago/"); };
-            githubButton = new ButtonField(linksPanel, "GITHUB", "githubButton");
-            githubButton.onClick += () => { Application.OpenURL("https://github.com/TRPG0/ArchipelagoULTRAKILL"); };
-            discordButton = new ButtonField(linksPanel, "AP AFTER DARK DISCORD", "discordButton");
-            discordButton.onClick += () => { Application.OpenURL("https://discord.gg/Sbhy4ykUKn"); };
-            poptrackerButton = new ButtonField(linksPanel, "POPTRACKER PACK", "poptrackerButton");
-            poptrackerButton.onClick += () => { Application.OpenURL("https://github.com/BowserCrusher/UltrakillPoptracker/releases/"); };
         }
 
         public static void LoadConnectionInfo()

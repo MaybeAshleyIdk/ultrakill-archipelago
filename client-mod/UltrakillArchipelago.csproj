@@ -1,0 +1,203 @@
+<!--
+	Copyright (c) 2025 MaybeAshleyIdk
+	SPDX-License-Identifier: GPL-3.0-or-later
+ -->
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>UltrakillArchipelago</AssemblyName>
+		<Version>$([System.IO.File]::ReadAllText($(MSBuildProjectDirectory)/../version.txt).Trim())</Version>
+
+		<TargetFramework>netstandard2.1</TargetFramework>
+
+		<Product>ULTRAKILL Archipelago Client Mod</Product>
+		<Description>Archipelago client implementation for ULTRAKILL</Description>
+		<Copyright>Copyright (c) 2025 MaybeAshleyIdk</Copyright>
+
+		<BepInExPluginName>Archipelago Client</BepInExPluginName>
+		<BepInExPluginGuid>maybeAshleyIdk.ultrakillArchipelago</BepInExPluginGuid>
+
+		<RestoreAdditionalProjectSources>
+			https://api.nuget.org/v3/index.json;
+			https://nuget.bepinex.dev/v3/index.json;
+			https://nuget.samboy.dev/v3/index.json
+		</RestoreAdditionalProjectSources>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+		<!-- <RootNamespace>UltrakillArchipelago</RootNamespace> -->
+		<RootNamespace>ArchipelagoULTRAKILL</RootNamespace>
+		<!-- <Nullable>enable</Nullable> -->
+		<NoWarn>IDE0003;IDE0350;IDE1006</NoWarn>
+		<!--
+			IDE0003: Remove explicit `this`
+			IDE0350: Remove explicit parameter types in lambda/anonymous function expressions
+			IDE1006: Add prefix "I" to interface names
+		-->
+
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+		<PluginConfiguratorVersion>1.10.2</PluginConfiguratorVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+			<_Parameter1>false</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties/Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+			<StronglyTypedNamespace>ArchipelagoULTRAKILL.Properties</StronglyTypedNamespace>
+			<StronglyTypedClassName>Resources</StronglyTypedClassName>
+		</EmbeddedResource>
+	</ItemGroup>
+	<!-- <https://github.com/dotnet/vscode-csharp/issues/3781#issuecomment-630999837> -->
+	<!-- Required for VSCode/OmniSharp to find the generated class. -->
+	<Target
+		Name="_PrepareResourcesBeforeCompile"
+		BeforeTargets="BeforeCompile;CoreCompile"
+		DependsOnTargets="PrepareResources" />
+
+	<ItemGroup>
+		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+		<PackageReference Include="BepInEx.Core" Version="5.*" />
+		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+
+		<PackageReference Include="Archipelago.MultiClient.Net" Version="6.7.0" />
+
+		<Reference Include="PluginConfigurator">
+			<HintPath>libs/com.eternalUnion.pluginConfigurator/PluginConfigurator.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>481eaa6c846d139777a9a2b494195bcffa2d021b66037a074ea7eb4cb328acdc</Sha256Checksum>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!--                           ULTRAKILL Patch 16d (released 2025-03-26)                           -->
+		<!--                          <https://steamdb.info/patchnotes/17867434/>                          -->
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+		<!-- The version of Unity that ULTRAKILL uses, read from the BepInEx console: -->
+		<PackageReference Include="UnityEngine.Modules" Version="2022.3.29" IncludeAssets="compile" />
+
+		<!-- Required assemblies from the game files: -->
+		<Reference Include="Assembly-CSharp">
+			<HintPath>libs/ultrakill/Assembly-CSharp.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>c7f55c860af9ccd31593ced4d2fffb2d9f73c39ed8b94272bfa6c85791c6623e</Sha256Checksum>
+		</Reference>
+		<Reference Include="plog">
+			<HintPath>libs/ultrakill/plog.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>38bb3bb0ca94df6ef73310ac4b6a341d90299ddda44c146874a674aa94d92878</Sha256Checksum>
+		</Reference>
+		<Reference Include="Unity.Addressables">
+			<HintPath>libs/ultrakill/Unity.Addressables.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>e56ce4c24d6d99b29062c6df0947a873154edb02b4e29797db4e7f0231a5ba89</Sha256Checksum>
+		</Reference>
+		<Reference Include="Unity.ResourceManager">
+			<HintPath>libs/ultrakill/Unity.ResourceManager.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>5121296d4575f382fdc4c761a8f5815698dc6a569784ba6ed98a22c0bb69a094</Sha256Checksum>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>libs/ultrakill/Unity.TextMeshPro.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>33e5b6898393edb88c816fc146967e17162130ad9576b25bcb86fff2bb1104ce</Sha256Checksum>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>libs/ultrakill/UnityEngine.UI.dll</HintPath>
+			<Private>false</Private>
+			<Sha256Checksum>c045064326bcb2a2cfe538b258fe3b40375a748ac5ed8052890d4cbac8d6cba4</Sha256Checksum>
+		</Reference>
+	</ItemGroup>
+
+	<!-- #region Thunderstore -->
+
+	<PropertyGroup>
+		<ThunderstoreDir>$(MSBuildProjectDirectory)/thunderstore/</ThunderstoreDir>
+		<ThunderstorePackagesBaseOutDir>$(ThunderstoreDir)/packages/</ThunderstorePackagesBaseOutDir>
+	</PropertyGroup>
+
+	<Target Name="_DefineIntermediateThunderstorePackageDirProperty">
+		<!--
+			The property `IntermediateOutputPath` is only available in targets, which is why this target is necessary.
+			<https://stackoverflow.com/a/77709288/9581962>
+		-->
+		<PropertyGroup>
+			<IntermediateThunderstorePackageDir>$(IntermediateOutputPath)/thunderstore-package/</IntermediateThunderstorePackageDir>
+		</PropertyGroup>
+	</Target>
+
+	<Target
+		Name="CreateThunderstorePackage"
+		DependsOnTargets="Build;_DefineIntermediateThunderstorePackageDirProperty"
+		AfterTargets="Build">
+
+		<PropertyGroup>
+			<ThunderstorePackageNameSuffix Condition="$(Configuration) != 'Release'">$(Configuration)</ThunderstorePackageNameSuffix>
+
+			<ThunderstorePackageName>ULTRArchipelago$(ThunderstorePackageNameSuffix)</ThunderstorePackageName>
+			<ThunderstorePackageOutDir>$(ThunderstorePackagesBaseOutDir)/$(Configuration)/</ThunderstorePackageOutDir>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<ThunderstorePackageFiles Include="$(OutDir)/Archipelago.MultiClient.Net.dll" />
+			<ThunderstorePackageFiles Include="$(TargetPath)" />
+
+			<ThunderstorePackageFiles Include="$(ThunderstoreDir)/icon.png" />
+			<ThunderstorePackageFiles Include="$(IntermediateThunderstorePackageDir)/README.md" />
+			<ThunderstorePackageFiles Include="$(IntermediateThunderstorePackageDir)/CHANGELOG.md" />
+			<ThunderstorePackageFiles Include="$(IntermediateThunderstorePackageDir)/manifest.json" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(IntermediateThunderstorePackageDir)" />
+
+		<WriteLinesToFile
+			Lines="$(
+				[System.IO.File]::ReadAllText($(ThunderstoreDir)/readme.template.md)
+					.Replace('{{VERSION}}', $(Version))
+			)"
+			File="$(IntermediateThunderstorePackageDir)/README.md"
+			Overwrite="true" />
+
+		<Copy
+			SourceFiles="$(ThunderstoreDir)/changelog.md"
+			DestinationFiles="$(IntermediateThunderstorePackageDir)/CHANGELOG.md" />
+
+		<WriteLinesToFile
+			Lines="$(
+				[System.IO.File]::ReadAllText($(ThunderstoreDir)/manifest.template.json)
+					.Replace('{{NAME}}', $(ThunderstorePackageName))
+					.Replace('{{VERSION}}', $(Version))
+					.Replace('{{DESCRIPTION}}', $(Description))
+					.Replace('{{PLUGIN_CONFIGURATOR_VERSION}}', $(PluginConfiguratorVersion))
+			)"
+			File="$(IntermediateThunderstorePackageDir)/manifest.json"
+			Overwrite="true" />
+
+		<Copy
+			SourceFiles="@(ThunderstorePackageFiles)"
+			DestinationFolder="$(IntermediateThunderstorePackageDir)" />
+
+		<MakeDir Directories="$(ThunderstorePackageOutDir)" />
+
+		<ZipDirectory
+			SourceDirectory="$(IntermediateThunderstorePackageDir)"
+			DestinationFile="$(ThunderstorePackageOutDir)/MaybeAshleyIdk-$(ThunderstorePackageName)-$(Version).zip"
+			Overwrite="true" />
+	</Target>
+
+	<Target
+		Name="CleanThunderstorePackages"
+		DependsOnTargets="_DefineIntermediateThunderstorePackageDirProperty"
+		BeforeTargets="Clean">
+
+		<RemoveDir Directories="$(ThunderstorePackagesBaseOutDir);$(IntermediateThunderstorePackageDir)" />
+	</Target>
+
+	<!-- #endregion -->
+</Project>

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using ArchipelagoULTRAKILL.Structures;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -28,7 +33,7 @@ namespace ArchipelagoULTRAKILL.Patches
         {
             if (Core.DataExists() && newState >= 2)
             {
-                if (Multiworld.ServerVersionIsAtLeast("3.2.0") && Core.data.enemyRewards > EnemyOptions.Disabled)
+                if (Core.data.enemyRewards > EnemyOptions.Disabled)
                 {
                     if (SceneHelper.CurrentScene == "Endless"
                         || SceneHelper.CurrentScene == "uk_construct"

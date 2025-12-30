@@ -1,25 +1,50 @@
-# ULTRAKILL Multiworld Setup Guide
+<!--
+  Copyright (c) 2025 MaybeAshleyIdk
+  SPDX-License-Identifier: CC-BY-SA-4.0
+-->
 
-First, download and install the Archipelago mod with r2modman, or manually by extracting the contents of the zip file into the `plugins` folder. If you decide to install manually, you will also need to install [PluginConfigurator](https://github.com/eternalUnion/UKPluginConfigurator).
+# ULTRAKILL Archipelago Setup Guide #
 
-Optionally, you can also download [NoTutorial](https://thunderstore.io/c/ultrakill/p/TRPG/NoTutorial/) to avoid accidentally entering the tutorial when making new save files.
+## Client Mod Installation ##
 
-*Note that only one player in the multiworld will need to complete steps 1-5.*
+The recommended way to install the client mod is through a mod manager like [r2modman].  
+After installing it and setting up a profile, search for `ULTRArchipelago` and install it.
 
-1. Download and install [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases).
+It is also recommended to install [NoTutorial] to skip the startup sequence intro and the tutorial when selecting
+a new save file.
 
-2. Download `ultrakill.apworld` from the mod's [releases page](https://github.com/TRPG0/ArchipelagoULTRAKILL/releases) and add it to your `worlds` folder. (Default path: `C:\ProgramData\Archipelago\lib\worlds`)
+[r2modman]: <https://thunderstore.io/package/ebkr/r2modman/> "r2modman | Thunderstore - The Risk of Rain 2 Mod Database"
+[NoTutorial]: <https://github.com/TRPG0/UK-NoTutorial> "TRPG0/UK-NoTutorial: A mod for ULTRAKILL that prevents the tutorial from loading when starting new saves."
 
-3. Set up all `.yaml` files for each player in the multiworld, then add them to the `Players` folder. A template can be downloaded for ULTRAKILL from the mod's [releases page.](https://github.com/TRPG0/ArchipelagoULTRAKILL/releases) A guide for advanced settings can be found [here.](https://archipelago.gg/tutorial/Archipelago/advanced_settings/en)
+## Configuring your YAML File ##
 
-4. Run `ArchipelagoGenerate.exe` to generate a game, which will appear in the `output` folder.
+### What is a YAML and why do I need one? ###
 
-5. Host a game, either manually, or by [uploading](https://archipelago.gg/uploads) it to the Archipelago website.
+An YAML file is the way that you provide your player options to Archipelago.
+See the [Archipelago Setup Guide](/tutorial/Archipelago/setup/en) here on the Archipelago website to learn more.
 
-6. To connect to the server, first select a new save file. Then open the options menu, click the PLUGIN CONFIG button, click Configure next to Archipelago, and open the PLAYER SETTINGS menu. Enter your name, the server's address in the form of `address:port`, and a password if necessary, then click the Connect button.
+### Where do I get a YAML? ###
 
-There are also some commands that can be used by pressing `F8` to open the console:
+You can use the [game options page for ULTRAKILL] here on the Archipelago website to generate a YAML using
+a graphical interface.
 
-- `connect [address:port] [player] [password]` - Connect to an Archipelago server.
-- `disconnect`: Disconnect from an Archipelago server.
-- `say [message]`: Send messages or commands to the server.
+[game options page for ULTRAKILL]: </games/ULTRAKILL/player-options>
+
+## Joining a MultiWorld Game ##
+
+To connect to an Archipelago server and start a run, first select an empty save file.  
+Then open the options, click on `PLUGIN CONFIG` (top left), then click on `CONFIGURE` next to the `Archipelago` entry
+and open the `PLAYER SETTINGS`.  
+Here you enter your slot name (the `name:` from your YAML file) and the server's address, port and password.  
+Once you've entered all the info, click on `CONNECT`.  
+You can back out of the options and starting playing!
+
+## Console Commands ##
+
+The mod adds the following console commands:
+
+* `connect <address:port> <slot> <password>` — Connect to an Archipelago server
+* `disconnect` — Disconnect from the currently connected Archipelago server
+* `say <message>` — Send messages or commands to the currently connected Archipelago server
+
+The console can be opened by pressing `F8` in the game.

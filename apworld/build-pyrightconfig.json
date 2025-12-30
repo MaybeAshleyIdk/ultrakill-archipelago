@@ -1,0 +1,12 @@
+{
+	"include": [
+		"build.py"
+	],
+
+	"reportImplicitOverride": "error",
+	"reportMissingImports": true,
+	"reportMissingTypeStubs": true,
+
+	"pythonVersion": "3.12",
+	"pythonPlatform": "All"
+}

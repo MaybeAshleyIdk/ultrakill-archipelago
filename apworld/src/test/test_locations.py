@@ -1,3 +1,6 @@
+# Copyright (c) 2023-2025 Trevor L
+# SPDX-License-Identifier: MIT
+
 from . import UltrakillTestBase
 from ..Regions import Regions
 from ..Locations import location_list

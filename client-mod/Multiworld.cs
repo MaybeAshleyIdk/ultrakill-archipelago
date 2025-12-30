@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023-2025 Trevor L
+ * SPDX-License-Identifier: MIT
+ */
+
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Packets;
@@ -797,15 +802,6 @@ namespace ArchipelagoULTRAKILL
                     Data = new Dictionary<string, JToken>() { ["completedLevels"] = null },
                 });
             }
-        }
-
-        public static bool ServerVersionIsAtLeast(string version)
-        {
-            if (Core.data.version.IsNullOrWhiteSpace() || Core.data.version == "?") return false;
-            if (Core.data.version == version) return true;
-
-            if (Core.data.version.CompareTo(version) < 0) return false;
-            else return true;
         }
     }
 }
