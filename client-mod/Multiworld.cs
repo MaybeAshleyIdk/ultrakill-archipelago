@@ -21,14 +21,16 @@ using BepInEx;
 using System.Linq;
 using TMPro;
 using System.Collections;
+using ArchipelagoULTRAKILL.New;
 
 namespace ArchipelagoULTRAKILL
 {
     public class Multiworld : MonoBehaviour
     {
         public static Version apVersion = new Version(0, 6, 1);
-        public static DeathLinkService DeathLinkService = null;
-        public static DeathLink lastDeathLink = null;
+#nullable enable
+        public static DeathLinkManager? DeathLinkManager { get; private set; }
+#nullable restore
 
         public static bool Authenticated;
         public static bool HintMode = false;
@@ -545,7 +547,9 @@ namespace ArchipelagoULTRAKILL
             messages.Clear();
             LocationManager.shopScouts = new Dictionary<string, AItem>();
             Session = null;
-            DeathLinkService = null;
+#nullable enable
+            DeathLinkManager = null;
+#nullable restore
             Authenticated = false;
             HintMode = false;
             CanGetItems = false;
@@ -763,26 +767,32 @@ namespace ArchipelagoULTRAKILL
 
         public static void EnableDeathLink()
         {
-            if (DeathLinkService == null)
+#nullable enable
+            DeathLinkManager? deathLinkManager = DeathLinkManager;
+            if (deathLinkManager is null)
             {
-                DeathLinkService = Session.CreateDeathLinkService();
-                DeathLinkService.OnDeathLinkReceived += DeathLinkReceived;
+                DeathLinkManager =
+                    DeathLinkManagerImpl.CreateStarted(
+                        Session,
+                        canPlayerBeKilled: () => Core.IsInLevel,
+                        Core.Logger
+                    );
             }
-            DeathLinkService.EnableDeathLink();
+            else
+            {
+                deathLinkManager.Start();
+            }
+#nullable restore
+
             if (Core.IsInLevel && Core.uim.deathLinkMessage == null) Core.uim.CreateDeathLinkMessage();
         }
 
+#nullable enable
         public static void DisableDeathLink()
         {
-            if (DeathLinkService == null) return;
-            else DeathLinkService.DisableDeathLink();
+            DeathLinkManager?.Stop();
         }
-
-        public static void DeathLinkReceived(DeathLink deathLink)
-        {
-            if (Core.IsInLevel) lastDeathLink = deathLink;
-            else Core.Logger.LogWarning("Received DeathLink, but player cannot be killed right now.");
-        }
+#nullable restore
 
         public static void SendCompletion()
         {

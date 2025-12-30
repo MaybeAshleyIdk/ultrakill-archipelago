@@ -47,15 +47,9 @@ namespace ArchipelagoULTRAKILL.Components
         {
             if (Core.IsPlaying)
             {
-                if (Multiworld.lastDeathLink != null && !nm.dead)
-                {
-                    string cause = "{0} has died.";
-                    if (!Multiworld.lastDeathLink.Cause.IsNullOrWhiteSpace()) cause = Multiworld.lastDeathLink.Cause;
-                    else cause = string.Format(cause, Multiworld.lastDeathLink.Source);
-
-                    if (Core.uim.deathLinkMessage != null) Core.uim.deathLinkMessage.SetDeathMessage(cause);
-                    NewMovement.Instance.GetHurt(200, false);
-                }
+#nullable enable
+                this.ConsumeAndHandleQueuedDeathLinkIfNotDead();
+#nullable restore
 
                 DisplayMessage();
                 UpdateStats();
@@ -64,6 +58,25 @@ namespace ArchipelagoULTRAKILL.Components
                 if (LocationManager.soapWaiting > 0) SpawnSoap();
             }
         }
+
+#nullable enable
+        private void ConsumeAndHandleQueuedDeathLinkIfNotDead()
+        {
+            if (this.nm.dead) return;
+
+            DeathLink? deathLink = Multiworld.DeathLinkManager?.ConsumeQueuedDeathLink();
+            if (deathLink is null) return;
+
+            string? cause = deathLink.Cause;
+            if (cause.IsNullOrWhiteSpace())
+            {
+                cause = $"{deathLink.Source} has died.";
+            }
+            Core.uim.deathLinkMessage?.SetDeathMessage(cause);
+
+            this.nm.GetHurt(200, invincible: false);
+        }
+#nullable restore
 
         public void DisplayMessage()
         {

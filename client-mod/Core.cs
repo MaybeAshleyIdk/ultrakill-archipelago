@@ -252,7 +252,9 @@ namespace ArchipelagoULTRAKILL
             UIManager.createdSkullIcons = false;
             UIManager.createdSwitchIcons = false;
             uim.deathLinkMessage = null;
-            Multiworld.lastDeathLink = null;
+#nullable enable
+            Multiworld.DeathLinkManager?.RemoveQueuedDeathLink();
+#nullable restore
 
             LevelManager.skulls.Clear();
 

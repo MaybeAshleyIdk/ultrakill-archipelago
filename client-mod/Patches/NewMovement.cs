@@ -28,7 +28,9 @@ namespace ArchipelagoULTRAKILL.Patches
     {
         public static void Postfix()
         {
-            Multiworld.lastDeathLink = null;
+#nullable enable
+            Multiworld.DeathLinkManager?.RemoveQueuedDeathLink();
+#nullable restore
             if (Core.uim.deathLinkMessage != null) Core.uim.deathLinkMessage.text.text = "";
         }
     }
