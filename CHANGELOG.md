@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 * Added a manifest to the APWorld
 
+### Changed ###
+
+* The two `ENABLE DEATH LINK`/`DISABLE DEATH LINK` buttons have been combined into a single one
+
 ### Fixed ###
 
 * Fixed an obscure bug which would cause the Whiplash to not work at all in the mission `1-4: COURT OF THE CORPSE KING`

@@ -18,6 +18,11 @@ namespace ArchipelagoULTRAKILL
 {
     public static class ConfigManager
     {
+#nullable enable
+        private const string DisableDeathLinkText = "DISABLE DEATH LINK";
+        private const string EnableDeathLinkText = "ENABLE DEATH LINK";
+#nullable restore
+
         public static PluginConfigurator config = null;
 
         public static ConfigPanel playerPanel;
@@ -31,8 +36,9 @@ namespace ArchipelagoULTRAKILL
         public static ButtonField connectButton;
         public static ButtonField disconnectButton;
         public static ConfigHeader connectionInfo;
-        public static ButtonField deathLinkOnButton;
-        public static ButtonField deathLinkOffButton;
+#nullable enable
+        private static ButtonField? deathLinkToggleButton = null;
+#nullable restore
         public static StringField chat;
 
         public static StringField start;
@@ -167,6 +173,9 @@ namespace ArchipelagoULTRAKILL
                     if (Core.data.password == "") Core.data.password = null;
                     if (hintMode.value) Multiworld.ConnectBK();
                     else Core.mw.StartCoroutine("Connect");
+#nullable enable
+                    SyncDeathLinkToggleButtonState();
+#nullable restore
                 }
             };
 
@@ -177,6 +186,9 @@ namespace ArchipelagoULTRAKILL
                 {
                     Multiworld.Disconnect();
                     connectionInfo.text = "Disconnected from server.";
+#nullable enable
+                    SyncDeathLinkToggleButtonState();
+#nullable restore
                     if (SceneHelper.CurrentScene == "Main Menu")
                     {
                         UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
@@ -184,24 +196,37 @@ namespace ArchipelagoULTRAKILL
                 }
             };
 
-            deathLinkOnButton = new ButtonField(playerPanel, "ENABLE DEATH LINK", "deathLinkOnButton");
-            deathLinkOnButton.onClick += () =>
-            {
-                if (Multiworld.Authenticated)
+#nullable enable
+            deathLinkToggleButton =
+                new ButtonField(
+                    parentPanel: playerPanel,
+                    text: Core.data.deathLink ? DisableDeathLinkText : EnableDeathLinkText,
+                    guid: "deathLinkToggleButton"
+                )
                 {
-                    Core.data.deathLink = true;
+                    interactable = Multiworld.Authenticated
+                };
+            deathLinkToggleButton.onClick += () =>
+            {
+                if (!(Multiworld.Authenticated))
+                {
+                    return;
+                }
+
+                bool isDeathLinkEnabled = Core.data.deathLink = !(Core.data.deathLink);
+
+                if (isDeathLinkEnabled)
+                {
                     Multiworld.EnableDeathLink();
                 }
-            };
-            deathLinkOffButton = new ButtonField(playerPanel, "DISABLE DEATH LINK", "deathLinkOffButton");
-            deathLinkOffButton.onClick += () =>
-            {
-                if (Multiworld.Authenticated)
+                else
                 {
-                    Core.data.deathLink = false;
                     Multiworld.DisableDeathLink();
                 }
+
+                deathLinkToggleButton.text = isDeathLinkEnabled ? DisableDeathLinkText : EnableDeathLinkText;
             };
+#nullable restore
 
             chat = new StringField(playerPanel, "CHAT", "chat", "", true, false) { interactable = false };
             chat.postValueChangeEvent += (string value) =>
@@ -375,6 +400,17 @@ namespace ArchipelagoULTRAKILL
             trapColor = new ColorField(colorPanel, "TRAP", "trapColor", new Color(0.7f, 0.7f, 0.7f), true);
         }
 
+#nullable enable
+        private static void SyncDeathLinkToggleButtonState()
+        {
+            ButtonField? button = deathLinkToggleButton;
+            if (button is null) return;
+
+            button.interactable = Multiworld.Authenticated;
+            button.text = Core.data.deathLink ? DisableDeathLinkText : EnableDeathLinkText;
+        }
+#nullable restore
+
         public static void LoadConnectionInfo()
         {
             if (Core.data.slot_name != null) playerName.value = Core.data.slot_name;
@@ -413,6 +449,10 @@ namespace ArchipelagoULTRAKILL
             musicRandomizer.value = Core.data.musicRandomizer;
             cybergrindHints.value = Core.data.cybergrindHints;
             deathLink.value = Core.data.deathLink;
+
+#nullable enable
+            SyncDeathLinkToggleButtonState();
+#nullable restore
         }
 
         public static void ResetStatsDefaults()
