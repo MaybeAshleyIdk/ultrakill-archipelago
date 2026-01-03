@@ -386,7 +386,9 @@ namespace ArchipelagoULTRAKILL
                     if (ConfigManager.gunColorRandomizer.value != ColorOptions.Off) ColorRandomizer.RandomizeGunColors();
                 }
 
-                if (Core.data.deathLink) EnableDeathLink();
+#nullable enable
+                if (slotData.DeathLink) EnableDeathLink();
+#nullable restore
 
                 PrefsManager.Instance.SetInt("weapon.arm0", 1);
 
@@ -740,9 +742,9 @@ namespace ArchipelagoULTRAKILL
             helper.DequeueItem();
         }
 
+#nullable enable
         public static void EnableDeathLink()
         {
-#nullable enable
             DeathLinkManager? deathLinkManager = DeathLinkManager;
             if (deathLinkManager is null)
             {
@@ -750,12 +752,13 @@ namespace ArchipelagoULTRAKILL
                     DeathLinkManagerImpl.CreateStarted(
                         Session,
                         canPlayerBeKilled: () => Core.IsInLevel,
+                        deathLinkThreshold: ConfigManager.DeathLinkThreshold,
                         Core.Logger
                     );
             }
             else
             {
-                deathLinkManager.Start();
+                deathLinkManager.Start(ConfigManager.DeathLinkThreshold);
             }
 #nullable restore
 
@@ -765,7 +768,7 @@ namespace ArchipelagoULTRAKILL
 #nullable enable
         public static void DisableDeathLink()
         {
-            DeathLinkManager?.Stop();
+            DeathLinkManager?.ResetAndStop();
         }
 #nullable restore
 

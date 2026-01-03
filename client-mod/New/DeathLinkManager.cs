@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 MaybeAshleyIdk
+ * Copyright (c) 2026 MaybeAshleyIdk
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
@@ -16,7 +16,7 @@ namespace ArchipelagoULTRAKILL.New
 
 		public void NotifyOfPlayerDeath();
 
-		public void Stop();
-		public void Start();
+		public void ResetAndStop();
+		public void Start(int deathLinkThreshold);
 	}
 }

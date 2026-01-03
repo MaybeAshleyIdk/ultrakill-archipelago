@@ -21,6 +21,8 @@ namespace ArchipelagoULTRAKILL
 #nullable enable
         private const string DisableDeathLinkText = "DISABLE DEATH LINK";
         private const string EnableDeathLinkText = "ENABLE DEATH LINK";
+
+        private const int DefaultDeathLinkThreshold = 3;
 #nullable restore
 
         public static PluginConfigurator config = null;
@@ -38,6 +40,7 @@ namespace ArchipelagoULTRAKILL
         public static ConfigHeader connectionInfo;
 #nullable enable
         private static ButtonField? deathLinkToggleButton = null;
+        private static IntField? deathLinkThresholdField = null;
 #nullable restore
         public static StringField chat;
 
@@ -117,6 +120,8 @@ namespace ArchipelagoULTRAKILL
         public static ButtonField discordButton;
         public static ButtonField poptrackerButton;
 
+        public static int DeathLinkThreshold => deathLinkThresholdField?.value ?? DefaultDeathLinkThreshold;
+
         public static void Initialize()
         {
             if (config != null) return;
@@ -174,7 +179,7 @@ namespace ArchipelagoULTRAKILL
                     if (hintMode.value) Multiworld.ConnectBK();
                     else Core.mw.StartCoroutine("Connect");
 #nullable enable
-                    SyncDeathLinkToggleButtonState();
+                    SyncDeathLinkFieldsState();
 #nullable restore
                 }
             };
@@ -187,7 +192,7 @@ namespace ArchipelagoULTRAKILL
                     Multiworld.Disconnect();
                     connectionInfo.text = "Disconnected from server.";
 #nullable enable
-                    SyncDeathLinkToggleButtonState();
+                    SyncDeathLinkFieldsState();
 #nullable restore
                     if (SceneHelper.CurrentScene == "Main Menu")
                     {
@@ -225,7 +230,23 @@ namespace ArchipelagoULTRAKILL
                 }
 
                 deathLinkToggleButton.text = isDeathLinkEnabled ? DisableDeathLinkText : EnableDeathLinkText;
+                SyncDeathLinkThresholdFieldState();
             };
+
+            deathLinkThresholdField =
+                new IntField(
+                    parentPanel: playerPanel,
+                    displayName: "DEATH LINK THRESHOLD",
+                    guid: "deathLinkThreshold",
+                    defaultValue: DefaultDeathLinkThreshold,
+                    minimumValue: 1,
+                    maximumValue: 999,
+                    setToNearestValidValueOnUnvalidInput: true,
+                    saveToConfig: true
+                )
+                {
+                    interactable = deathLinkToggleButton.interactable && !(Core.data.deathLink)
+                };
 #nullable restore
 
             chat = new StringField(playerPanel, "CHAT", "chat", "", true, false) { interactable = false };
@@ -401,6 +422,12 @@ namespace ArchipelagoULTRAKILL
         }
 
 #nullable enable
+        private static void SyncDeathLinkFieldsState()
+        {
+            SyncDeathLinkToggleButtonState();
+            SyncDeathLinkThresholdFieldState();
+        }
+
         private static void SyncDeathLinkToggleButtonState()
         {
             ButtonField? button = deathLinkToggleButton;
@@ -408,6 +435,18 @@ namespace ArchipelagoULTRAKILL
 
             button.interactable = Multiworld.Authenticated;
             button.text = Core.data.deathLink ? DisableDeathLinkText : EnableDeathLinkText;
+        }
+
+        private static void SyncDeathLinkThresholdFieldState()
+        {
+            IntField? field = deathLinkThresholdField;
+            if (field is null) return;
+
+            ButtonField? deathLinkToggleButton = ConfigManager.deathLinkToggleButton;
+
+            field.interactable = !(deathLinkToggleButton is null) &&
+                deathLinkToggleButton.interactable &&
+                !(Core.data.deathLink);
         }
 #nullable restore
 
@@ -451,7 +490,7 @@ namespace ArchipelagoULTRAKILL
             deathLink.value = Core.data.deathLink;
 
 #nullable enable
-            SyncDeathLinkToggleButtonState();
+            SyncDeathLinkFieldsState();
 #nullable restore
         }
 

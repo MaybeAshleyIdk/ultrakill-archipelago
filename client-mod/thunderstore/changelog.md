@@ -7,6 +7,11 @@
 
 ## Unreleased ##
 
+### Added ###
+
+* **Death link threshold**  
+  The number of deaths that are required to send a death link (default 3)
+
 ### Changed ###
 
 * The two `ENABLE DEATH LINK`/`DISABLE DEATH LINK` buttons have been combined into a single one

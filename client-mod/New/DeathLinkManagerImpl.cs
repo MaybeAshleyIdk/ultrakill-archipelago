@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 MaybeAshleyIdk
+ * Copyright (c) 2026 MaybeAshleyIdk
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
@@ -10,6 +10,7 @@ using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using ArchipelagoULTRAKILL.Components;
 using ArchipelagoULTRAKILL.New.Utils;
 using BepInEx.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -41,40 +42,59 @@ namespace ArchipelagoULTRAKILL.New
 
 		private sealed class StartedState
 		{
-			public DeathLinkWrapper? QueuedDeathLink = null;
+			public readonly int DeathLinkThreshold;
 
-			public static readonly StartedState Initial = new StartedState();
+			public DeathLinkWrapper? QueuedDeathLink = null;
+			public int NonDeathLinkPlayerDeathsCount = 0;
+
+			public StartedState(int deathLinkThreshold)
+			{
+				this.DeathLinkThreshold = deathLinkThreshold;
+			}
 		}
 
 		private readonly DeathLinkService deathLinkService;
 		private readonly CanPlayerBeKilledPredicate canPlayerBeKilled;
 		private readonly ManualLogSource logger;
 
-		private StartedState? startedState = StartedState.Initial;
+		private StartedState? startedState;
 
 		private DeathLinkManagerImpl(
 			DeathLinkService deathLinkService,
 			CanPlayerBeKilledPredicate canPlayerBeKilled,
+			int deathLinkThreshold,
 			ManualLogSource logger
 		)
 		{
 			this.deathLinkService = deathLinkService;
 			this.canPlayerBeKilled = canPlayerBeKilled;
 			this.logger = logger;
+
+			this.startedState = new StartedState(deathLinkThreshold);
 		}
 
 		public static DeathLinkManager CreateStarted(
 			ArchipelagoSession session,
 			CanPlayerBeKilledPredicate canPlayerBeKilled,
+			int deathLinkThreshold,
 			ManualLogSource logger
 		)
 		{
+			if (deathLinkThreshold < 1)
+			{
+				throw new ArgumentException(
+					message: "Death link threshold must be greater than or equal to 1",
+					paramName: nameof(deathLinkThreshold)
+				);
+			}
+
 			DeathLinkService deathLinkService = session.CreateDeathLinkService();
 
 			var manager =
 				new DeathLinkManagerImpl(
 					deathLinkService,
 					canPlayerBeKilled,
+					deathLinkThreshold,
 					logger
 				);
 
@@ -110,21 +130,11 @@ namespace ArchipelagoULTRAKILL.New
 			}
 			else
 			{
-				var deathLink =
-					new DeathLink(
-						sourcePlayer: Core.data.slot_name,
-						cause: DetermineDeathLinkCause()
-					);
-
-				string logMsg = "Sending death link " +
-					((deathLink.Cause is null) ? "without a cause" : $"with cause {deathLink.Cause.Quoted()}");
-				this.logger.LogInfo(logMsg);
-
-				this.deathLinkService.SendDeathLink(deathLink);
+				this.UpdateNonDeathLinkPlayerDeathsCount(startedState);
 			}
 		}
 
-		public void Stop()
+		public void ResetAndStop()
 		{
 			StartedState? prevState = Interlocked.Exchange(ref this.startedState, null);
 			if (!(prevState is null))
@@ -133,9 +143,17 @@ namespace ArchipelagoULTRAKILL.New
 			}
 		}
 
-		public void Start()
+		public void Start(int deathLinkThreshold)
 		{
-			StartedState? prevState = Interlocked.CompareExchange(ref this.startedState, StartedState.Initial, null);
+			if (deathLinkThreshold < 1)
+			{
+				throw new ArgumentException(
+					message: "Death link threshold must be greater than or equal to 1",
+					paramName: nameof(deathLinkThreshold)
+				);
+			}
+
+			StartedState? prevState = Interlocked.Exchange(ref this.startedState, new StartedState(deathLinkThreshold));
 			if (prevState is null)
 			{
 				this.deathLinkService.EnableDeathLink();
@@ -167,6 +185,44 @@ namespace ArchipelagoULTRAKILL.New
 			}
 
 			startedState.QueuedDeathLink = new DeathLinkWrapper(unwrapped: deathLink);
+		}
+
+		private void UpdateNonDeathLinkPlayerDeathsCount(StartedState startedState)
+		{
+			int nonDeathLinkPlayerDeathsCount =
+				Interlocked.Increment(ref startedState.NonDeathLinkPlayerDeathsCount);
+
+			if (nonDeathLinkPlayerDeathsCount < startedState.DeathLinkThreshold)
+			{
+				return;
+			}
+
+			while (true)
+			{
+				int prevValue =
+					Interlocked.CompareExchange(
+						ref startedState.NonDeathLinkPlayerDeathsCount,
+						nonDeathLinkPlayerDeathsCount % startedState.DeathLinkThreshold,
+						nonDeathLinkPlayerDeathsCount
+					);
+
+				if (prevValue == nonDeathLinkPlayerDeathsCount)
+				{
+					break;
+				}
+			}
+
+			var deathLink =
+				new DeathLink(
+					sourcePlayer: Core.data.slot_name,
+					cause: DetermineDeathLinkCause()
+				);
+
+			string logMsg = "Sending death link " +
+				((deathLink.Cause is null) ? "without a cause" : $"with cause {deathLink.Cause.Quoted()}");
+			this.logger.LogInfo(logMsg);
+
+			this.deathLinkService.SendDeathLink(deathLink);
 		}
 
 		private static string? DetermineDeathLinkCause()
