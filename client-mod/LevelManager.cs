@@ -98,10 +98,20 @@ namespace ArchipelagoULTRAKILL
 
         public static void DeactivateSkull(GameObject skull)
         {
-            ItemPlaceZone ipz = skull.GetComponentInParent<ItemPlaceZone>(true);
-            foreach (InstantiateObject io in ipz.altarElements)
+#nullable enable
+            ItemPlaceZone? ipz = skull.GetComponentInParent<ItemPlaceZone>(true);
+            if (ipz is null)
             {
-                io.gameObject.SetActive(false);
+                Core.Logger.LogWarning($"ItemPlaceZone of skull game object {skull} is null");
+            }
+#nullable restore
+            else
+            {
+                foreach (InstantiateObject io in ipz.altarElements)
+                {
+                    Core.Logger.LogInfo($"InstantiateObject: {io}");
+                    io.gameObject.SetActive(false);
+                }
             }
             skull.SetActive(false);
         }
