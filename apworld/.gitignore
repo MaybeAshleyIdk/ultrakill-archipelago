@@ -2,6 +2,7 @@
 
 /.build/
 
+/src/slot_data.py
 /src/version.py
 
 /output/

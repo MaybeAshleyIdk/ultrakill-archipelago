@@ -1,0 +1,9 @@
+<Solution>
+	<Folder Name="/client-mod-source-code-generator/">
+		<Project Path="client-mod-source-code-generator/UltrakillArchipelagoSourceCodeGenerator.csproj" />
+	</Folder>
+
+	<Folder Name="/client-mod/">
+		<Project Path="client-mod/UltrakillArchipelago.csproj" />
+	</Folder>
+</Solution>

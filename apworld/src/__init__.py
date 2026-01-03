@@ -12,6 +12,7 @@ from .Rules import UltrakillRules
 from .Options import UltrakillOptions
 from .Music import multilayer_music, singlelayer_music, ordered_list
 from .version import VERSION
+from .slot_data import SlotData
 
 
 class UltrakillWeb(WebWorld):
@@ -447,44 +448,47 @@ class UltrakillWorld(World):
 
 
     def fill_slot_data(self) -> Dict[str, Any]:
+        slot_data_typed = SlotData(
+            version=VERSION,
+            goal_requirement=self.options.goal_requirement.value,
+            perfect_goal=bool(self.options.perfect_goal),
+            challenge_rewards=bool(self.options.challenge_rewards),
+            p_rank_rewards=bool(self.options.p_rank_rewards),
+            hank_rewards=bool(self.options.hank_rewards),
+            randomize_clash_mode=bool(self.options.randomize_clash_mode),
+            fish_rewards=bool(self.options.fish_rewards),
+            cleaning_rewards=bool(self.options.cleaning_rewards),
+            chess_reward=bool(self.options.chess_reward),
+            rocket_race_reward=bool(self.options.rocket_race_reward),
+            start_with_arm=bool(self.options.start_with_arm),
+            starting_stamina=self.options.starting_stamina.value,
+            starting_walljumps=self.options.starting_walljumps.value,
+            start_with_slide=bool(self.options.start_with_slide),
+            start_with_slam=bool(self.options.start_with_slam),
+            randomize_skulls=bool(self.options.randomize_skulls),
+            randomize_limbo_switches=bool(self.options.randomize_limbo_switches),
+            randomize_violence_switches=bool(self.options.randomize_violence_switches),
+            point_multiplier=self.options.point_multiplier.value,
+            music_randomizer=bool(self.options.music_randomizer),
+            cybergrind_hints=bool(self.options.cybergrind_hints),
+            death_link=bool(self.options.death_link),
+        )
+
         slot_data: Dict[str, Any] = {
-            "version": VERSION,
             "locations": self.game_id_to_long,
             "start": self.start_level.short_name,
             "goal": self.goal_level.short_name,
-            "goal_requirement": self.options.goal_requirement.value,
-            "perfect_goal": bool(self.options.perfect_goal),
             "skipped_levels": self.options.skipped_levels.value,
             "enemy_rewards": self.options.enemy_rewards.value,
-            "challenge_rewards": bool(self.options.challenge_rewards),
-            "p_rank_rewards": bool(self.options.p_rank_rewards),
-            "hank_rewards": bool(self.options.hank_rewards),
-            "randomize_clash_mode": bool(self.options.randomize_clash_mode),
-            "fish_rewards": bool(self.options.fish_rewards),
-            "cleaning_rewards": bool(self.options.cleaning_rewards),
-            "chess_reward": bool(self.options.chess_reward),
-            "rocket_race_reward": bool(self.options.rocket_race_reward),
             "randomize_secondary_fire": self.options.randomize_secondary_fire.value,
-            "start_with_arm": bool(self.options.start_with_arm),
-            "starting_stamina": self.options.starting_stamina.value,
-            "starting_walljumps": self.options.starting_walljumps.value,
-            "start_with_slide": bool(self.options.start_with_slide),
-            "start_with_slam": bool(self.options.start_with_slam),
             "revolver_form": self.options.revolver_form.value,
             "shotgun_form": self.options.shotgun_form.value,
             "nailgun_form": self.options.nailgun_form.value,
-            "randomize_skulls": bool(self.options.randomize_skulls),
-            "randomize_limbo_switches": bool(self.options.randomize_limbo_switches),
-            "randomize_violence_switches": bool(self.options.randomize_violence_switches),
-            "point_multiplier": self.options.point_multiplier.value,
             "ui_color_randomizer": self.options.ui_color_randomizer.value,
             "gun_color_randomizer": self.options.gun_color_randomizer.value,
-            "music_randomizer": bool(self.options.music_randomizer),
             "music": self.music,
-            "cybergrind_hints": bool(self.options.cybergrind_hints),
-            "death_link": bool(self.options.death_link),
         }
-        return slot_data
+        return {**(slot_data_typed.to_mapping()), **slot_data}
 
 
 class UltrakillItem(Item):

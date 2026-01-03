@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2025 MaybeAshleyIdk
+# Copyright (c) 2026 MaybeAshleyIdk
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import urllib.request
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, StrEnum
 from io import BufferedRandom, BufferedReader, TextIOBase, TextIOWrapper
 from os import DirEntry
 from pathlib import Path, PurePath
@@ -29,7 +29,7 @@ from subprocess import CompletedProcess
 from tarfile import TarFile, TarInfo
 from tempfile import SpooledTemporaryFile, TemporaryDirectory
 from types import SimpleNamespace
-from typing import Any, ClassVar, Never, final, override
+from typing import Any, ClassVar, Mapping, Never, final, override
 from venv import EnvBuilder
 
 if sys.version_info < (3, 12, 0):
@@ -61,6 +61,9 @@ class Environment:
 	archipelago_venv_exec_cmd_file_path: Path = build_dir_path / "venv_exec_cmd.txt"
 
 	source_dir_path: Path = script_dir_path / "src"
+
+	slot_data_schema_file_path: Path = script_dir_path / ".." / "shared" / "slot_data_schema.cfg"
+	slot_data_class_source_file_path: Path = source_dir_path / "slot_data.py"
 
 	version_file_path: Path = script_dir_path / ".." / "version.txt"
 	version_python_file_path: Path = source_dir_path / "version.py"
@@ -417,6 +420,467 @@ class ArchipelagoEnvBuilder(EnvBuilder):
 
 
 # endregion
+# region target: SlotData class source file
+
+
+# region slot data schema entry
+
+
+class SlotDataSchemaEntryTypeData(ABC):
+
+	@staticmethod
+	@abstractmethod
+	def get_python_type_name() -> str:
+		raise NotImplementedError()
+
+
+@final
+class SlotDataSchemaEntryTypes:
+	def __init__(self) -> None:
+		raise NotImplementedError()
+
+	@final
+	@dataclass(frozen=True)
+	class Bool(SlotDataSchemaEntryTypeData):
+		pass
+
+		@override
+		@staticmethod
+		def get_python_type_name() -> str:
+			return "bool"
+
+	@final
+	@dataclass(frozen=True)
+	class Int32(SlotDataSchemaEntryTypeData):
+		min_value: int
+		max_value: int
+
+		@override
+		@staticmethod
+		def get_python_type_name() -> str:
+			return "int"
+
+	@final
+	@dataclass(frozen=True)
+	class String(SlotDataSchemaEntryTypeData):
+
+		@override
+		@staticmethod
+		def get_python_type_name() -> str:
+			return "str"
+
+
+@final
+@dataclass(frozen=True)
+class SlotDataSchemaEntry:
+	type_data: SlotDataSchemaEntryTypeData
+	description: str | None
+
+	def __post_init__(self):
+		if self.description == "":
+			raise ValueError("Slot data schema entry description must not be empty")
+
+
+# endregion
+
+
+@final
+class SlotDataSchema:
+	@final
+	@enum.unique
+	class _PropertyNames(StrEnum):
+		MIN_VALUE = "min"
+		MAX_VALUE = "max"
+		FALLBACK_VALUE = "fallback"
+
+	class _PartialEntry(ABC):
+		_key: str
+		_description: str | None = None
+
+		def __init__(self, key: str) -> None:
+			self._key = key
+
+		@property
+		def key(self) -> str:
+			return self._key
+
+		@property
+		def description(self) -> str | None:
+			return self._description
+
+		@abstractmethod
+		def init_property(self, name: str, value: str) -> bool:
+			raise NotImplementedError()
+
+		@abstractmethod
+		def to_type_data(self) -> SlotDataSchemaEntryTypeData | None:
+			raise NotImplementedError()
+
+		def add_description_line(self, line: str) -> None:
+			if self._description is None:
+				self._description = ""
+			else:
+				self._description += "\n"
+
+			self._description += line
+
+	# region types
+
+	@final
+	class _PartialBoolEntry(_PartialEntry):
+		# The APWorld code does not make use of the fallback value property, but we still validate.
+		_is_fallback_initialized: bool = False
+
+		@override
+		def init_property(self, name: str, value: str) -> bool:
+			if name != SlotDataSchema._PropertyNames.FALLBACK_VALUE.value:
+				return False
+
+			if self._is_fallback_initialized:
+				return False
+
+			if (value != "true") and (value != "false"):
+				return False
+
+			self._is_fallback_initialized = True
+			return True
+
+		@override
+		def to_type_data(self) -> SlotDataSchemaEntryTypeData | None:
+			if not self._is_fallback_initialized:
+				return None
+
+			return SlotDataSchemaEntryTypes.Bool()
+
+	@final
+	class _PartialInt32Entry(_PartialEntry):
+		_min_value: int | None = None
+		_max_value: int | None = None
+		# The APWorld code does not make use of the fallback value property, but we still validate.
+		_fallback_value: int | None = None
+
+		@override
+		def init_property(self, name: str, value: str) -> bool:
+			match name:
+				case SlotDataSchema._PropertyNames.MIN_VALUE.value:
+					return self._init_min_value(value)
+				case SlotDataSchema._PropertyNames.MAX_VALUE.value:
+					return self._init_max_value(value)
+				case SlotDataSchema._PropertyNames.FALLBACK_VALUE.value:
+					return self._init_fallback_value(value)
+				case _:
+					return False
+
+		@override
+		def to_type_data(self) -> SlotDataSchemaEntryTypeData | None:
+			if self._fallback_value is None:
+				return None
+
+			min_value: int = self._min_value if self._min_value is not None else -2 ** 31
+			max_value: int = self._max_value if self._max_value is not None else (2 ** 31) - 1
+
+			return SlotDataSchemaEntryTypes.Int32(min_value, max_value)
+
+		def _init_min_value(self, min_value_str: str) -> bool:
+			if self._min_value is not None:
+				return False
+
+			min_value: int | None = self._parse_string(min_value_str)
+			if min_value is None:
+				return False
+
+			if (self._max_value is not None) and (min_value > self._max_value):
+				return False
+			if (self._fallback_value is not None) and (self._fallback_value < min_value):
+				return False
+
+			self._min_value = min_value
+			return True
+
+		def _init_max_value(self, max_value_str: str) -> bool:
+			if self._max_value is not None:
+				return False
+
+			max_value: int | None = self._parse_string(max_value_str)
+			if max_value is None:
+				return False
+
+			if (self._min_value is not None) and (max_value < self._min_value):
+				return False
+			if (self._fallback_value is not None) and (self._fallback_value > max_value):
+				return False
+
+			self._max_value = max_value
+			return True
+
+		def _init_fallback_value(self, fallback_value_str: str) -> bool:
+			if self._fallback_value is not None:
+				return False
+
+			fallback_value: int | None = self._parse_string(fallback_value_str)
+			if fallback_value is None:
+				return False
+
+			if (self._min_value is not None) and (fallback_value < self._min_value):
+				return False
+			if (self._max_value is not None) and (fallback_value > self._max_value):
+				return False
+
+			self._fallback_value = fallback_value
+			return True
+
+		@staticmethod
+		def _parse_string(value_str: str) -> int | None:
+			value_str = value_str.removeprefix("+").replace("+", " ")
+
+			value: int
+			try:
+				value = int(value_str)
+			except ValueError:
+				return None
+
+			if (value < (-2 ** 31)) or (value > ((2 ** 31) - 1)):
+				return None
+
+			return value
+
+	@final
+	class _PartialStringEntry(_PartialEntry):
+
+		@override
+		def init_property(self, name: str, value: str) -> bool:
+			return False
+
+		@override
+		def to_type_data(self) -> SlotDataSchemaEntryTypeData | None:
+			return SlotDataSchemaEntryTypes.String()
+
+	# endregion
+
+	@final
+	@dataclass(frozen=True)
+	class _EntryStarted:
+		new_entry: SlotDataSchema._PartialEntry
+
+	@final
+	@dataclass(frozen=True)
+	class _EntryFinalized:
+		key: str
+		entry: SlotDataSchemaEntry
+
+	@final
+	@dataclass(frozen=True)
+	class _InvalidSchema:
+		pass
+
+	_LineProcessingResult = _EntryStarted | _EntryFinalized | _InvalidSchema | None
+
+	@staticmethod
+	def parse_file(file_path: Path) -> Mapping[str, SlotDataSchemaEntry] | None:
+		schema: dict[str, SlotDataSchemaEntry] = {}
+
+		file: TextIOWrapper
+		with open(file_path, mode="r", encoding="utf-8") as file:
+			current_entry: SlotDataSchema._PartialEntry | None = None
+
+			line: str
+			for line in file:
+				result: SlotDataSchema._LineProcessingResult = SlotDataSchema._process_line(line, current_entry)
+
+				match result:
+					case SlotDataSchema._EntryStarted(new_entry):
+						current_entry = new_entry
+
+					case SlotDataSchema._EntryFinalized(key, entry):
+						schema[key] = entry
+						current_entry = None
+
+					case SlotDataSchema._InvalidSchema():
+						return None
+
+		return schema
+
+	@staticmethod
+	def _process_line(line: str, current_entry: _PartialEntry | None) -> _LineProcessingResult:
+		comment_char_index: int = line.find("#")
+
+		if comment_char_index >= 0:
+			line = line[:comment_char_index]
+
+		line = line.strip()
+		if line == "":
+			return None
+
+		if current_entry is None:
+			entry: SlotDataSchema._PartialEntry | None = SlotDataSchema._process_head_line(line)
+
+			if entry is None:
+				return SlotDataSchema._InvalidSchema()
+
+			return SlotDataSchema._EntryStarted(entry)
+
+		description_match: Match[str] | None = re.match(r"^\(i\)(.*)$", line)
+		if description_match is not None:
+			description_line: str = description_match.group(1).strip()
+
+			if description_line == "":
+				return SlotDataSchema._InvalidSchema()
+
+			current_entry.add_description_line(description_line)
+			return None
+
+		property_match: Match[str] | None = re.match(r"^([a-z][a-z0-9_]*)\s*=\s*(.+)$", line)
+		if property_match is not None:
+			property_name: str = property_match.group(1)
+			property_value: str = property_match.group(2).strip()
+
+			success: bool = current_entry.init_property(property_name, property_value)
+			if not success:
+				return SlotDataSchema._InvalidSchema()
+
+			return None
+
+		if line == "}":
+			type_data: SlotDataSchemaEntryTypeData | None = current_entry.to_type_data()
+			if type_data is None:
+				return SlotDataSchema._InvalidSchema()
+
+			return SlotDataSchema._EntryFinalized(
+				key=current_entry.key,
+				entry=SlotDataSchemaEntry(type_data, current_entry.description),
+			)
+
+		return SlotDataSchema._InvalidSchema()
+
+	@staticmethod
+	def _process_head_line(line: str) -> _PartialEntry | None:
+		head_match: Match[str] | None = re.match(r"^([a-z0-9_]+)\s*:\s*([a-z0-9_]+)\s*\{$", line)
+
+		if head_match is None:
+			return None
+
+		key: str = head_match.group(1)
+		type_name: str = head_match.group(2)
+
+		match type_name:
+			case "bool":
+				return SlotDataSchema._PartialBoolEntry(key)
+			case "int32":
+				return SlotDataSchema._PartialInt32Entry(key)
+			case "string":
+				return SlotDataSchema._PartialStringEntry(key)
+			case _:
+				return None
+
+
+class SlotDataClassSourceFileTarget(Target):
+	def __init__(self) -> None:
+		super().__init__(
+			name="slot_data_class_source_file",
+			dependencies=(),
+		)
+
+	@override
+	def _is_up_to_date(self, environment: Environment) -> bool:
+		slot_data_class_source_file_mtime: int
+		try:
+			slot_data_class_source_file_mtime = environment.slot_data_class_source_file_path.stat().st_mtime_ns
+		except FileNotFoundError:
+			return False
+
+		slot_data_schema_file_mtime: int = environment.slot_data_schema_file_path.stat().st_mtime_ns
+
+		return slot_data_class_source_file_mtime > slot_data_schema_file_mtime
+
+	@override
+	def _build(self, environment: Environment) -> None:
+		schema: Mapping[str, SlotDataSchemaEntry] | None = \
+			SlotDataSchema.parse_file(environment.slot_data_schema_file_path)
+
+		if schema is None:
+			print(f"{sys.argv[0]}: {environment.slot_data_schema_file_path}: invalid schema", file=sys.stderr)
+			sys.exit(1)
+
+		SlotDataClassSourceFileTarget._generate_file(schema, environment.slot_data_class_source_file_path)
+
+	@staticmethod
+	def _generate_file(schema: Mapping[str, SlotDataSchemaEntry], file_path: Path) -> None:
+		slot_data_source_file: TextIOWrapper
+		with (open(file_path, mode="w+", encoding="utf-8") as slot_data_source_file):
+			slot_data_source_file.write(
+				"# This file was automatically generated. DO NOT EDIT IT!\n"
+				"\n"
+				"from collections.abc import Mapping\n"
+				"from dataclasses import dataclass\n"
+				"from typing import Any, final\n"
+				"\n"
+				"\n"
+				"@final\n"
+				"@dataclass(frozen=True)\n"
+				"class SlotData:\n",
+			)
+
+			key: str
+			entry: SlotDataSchemaEntry
+
+			for key, entry in schema.items():
+				slot_data_source_file.write(f"\t{key}: {entry.type_data.get_python_type_name()}\n")
+
+				if entry.description is not None:
+					if "\n" in entry.description:
+						slot_data_source_file.write(
+							"\t\"\"\"\n" +
+							("\t" + entry.description.replace("\n", "\n\t") + "\n") +
+							"\t\"\"\"\n",
+						)
+					else:
+						slot_data_source_file.write(f"\t\"\"\"{entry.description}\"\"\"\n")
+
+				slot_data_source_file.write("\n")
+
+			slot_data_source_file.write("\tdef __post_init__(self):\n")
+
+			for key, entry in schema.items():
+				match entry.type_data:
+					case SlotDataSchemaEntryTypes.Bool():
+						pass
+
+					case SlotDataSchemaEntryTypes.Int32(min_value, max_value):
+						slot_data_source_file.write(
+							f"\t\tif (self.{key} < {min_value}) or (self.{key} > {max_value}):\n"
+							"\t\t\traise ValueError(\""
+							f"{key} must be in the range [{min_value}, {max_value}]"
+							"\")\n\n",
+						)
+
+					case SlotDataSchemaEntryTypes.String():
+						slot_data_source_file.write(
+							f"\t\tif self.{key} == \"\":\n"
+							f"\t\t\traise ValueError(\"{key} must not be empty\")\n\n",
+						)
+
+			slot_data_source_file.write(
+				"\tdef to_mapping(self) -> Mapping[str, Any]:\n"
+				"\t\treturn {\n",
+			)
+
+			for key, entry in schema.items():
+				slot_data_source_file.write(f"\t\t\t\"{key}\": self.{key},\n")
+
+			slot_data_source_file.write("\t\t}\n")
+
+	@override
+	def clean(self, environment: Environment) -> None:
+		try:
+			os.remove(environment.slot_data_class_source_file_path)
+		except FileNotFoundError:
+			pass
+
+
+slot_data_class_source_file_target = SlotDataClassSourceFileTarget()
+
+
+# endregion
 # region target: version python file
 
 
@@ -516,7 +980,12 @@ class ApWorldTarget(Target):
 	def __init__(self) -> None:
 		super().__init__(
 			name="apworld",
-			dependencies=(archipelago_virtual_environment_target, version_python_file_target, manifest_file_target),
+			dependencies=(
+				archipelago_virtual_environment_target,
+				slot_data_class_source_file_target,
+				version_python_file_target,
+				manifest_file_target,
+			),
 		)
 
 	@override
@@ -796,6 +1265,7 @@ ALL_TARGETS: Sequence[Target] = (
 	archipelago_source_archive_target,
 	archipelago_source_directory_target,
 	archipelago_virtual_environment_target,
+	slot_data_class_source_file_target,
 	version_python_file_target,
 	manifest_file_target,
 	apworld_target,
@@ -845,6 +1315,11 @@ def clean_all(environment: Environment) -> None:
 
 	try:
 		os.remove(environment.version_python_file_path)
+	except FileNotFoundError:
+		pass
+
+	try:
+		os.remove(environment.slot_data_class_source_file_path)
 	except FileNotFoundError:
 		pass
 

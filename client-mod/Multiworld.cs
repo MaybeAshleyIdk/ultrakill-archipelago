@@ -207,36 +207,6 @@ namespace ArchipelagoULTRAKILL
             }
         }
 
-        public static void TryGetSlotDataValue(ref string option, Dictionary<string, object> slotData, string key, string defaultValue)
-        {
-            try { option = slotData[key].ToString(); }
-            catch (KeyNotFoundException)
-            {
-                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
-                option = defaultValue;
-            }
-        }
-
-        public static void TryGetSlotDataValue(ref int option, Dictionary<string, object> slotData, string key, int defaultValue)
-        {
-            try { option = int.Parse(slotData[key].ToString()); }
-            catch (KeyNotFoundException) 
-            {
-                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
-                option = defaultValue; 
-            }
-        }
-
-        public static void TryGetSlotDataValue(ref bool option, Dictionary<string, object> slotData, string key, bool defaultValue)
-        {
-            try { option = bool.Parse(slotData[key].ToString()); }
-            catch (KeyNotFoundException) 
-            {
-                Core.Logger.LogWarning($"No key found for option \"{key}\". Using default value ({defaultValue})");
-                option = defaultValue; 
-            }
-        }
-
         public static void TryGetSlotDataValue(ref WeaponForm option, Dictionary<string, object> slotData, string key, WeaponForm defaultValue)
         {
             try { option = (WeaponForm)int.Parse(slotData[key].ToString()); }
@@ -304,31 +274,36 @@ namespace ArchipelagoULTRAKILL
                 }
 
                 Core.data.seed = Session.RoomState.Seed;
-                TryGetSlotDataValue(ref Core.data.version, success.SlotData, "version", string.Empty);
                 Core.data.serverVersion = Session.RoomState.GeneratorVersion.ToString();
                 Core.Logger.LogInfo($"Server version: {Session.RoomState.Version} / {(Core.data.version == string.Empty ? "?" : Core.data.version)}");
+
+#nullable enable
+                SlotData slotData = SlotData.FromLoginResult(success, Core.Logger);
+
+                Core.data.version = slotData.Version;
+                Core.data.goalRequirement = slotData.GoalRequirement;
+                Core.data.perfectGoal = slotData.PerfectGoal;
+                Core.data.challengeRewards = slotData.ChallengeRewards;
+                Core.data.pRankRewards = slotData.PRankRewards;
+                Core.data.hankRewards = slotData.HankRewards;
+                Core.data.clashReward = slotData.RandomizeClashMode;
+                Core.data.fishRewards = slotData.FishRewards;
+                Core.data.cleanRewards = slotData.CleaningRewards;
+                Core.data.chessReward = slotData.ChessReward;
+                Core.data.rocketReward = slotData.RocketRaceReward;
+                Core.data.randomizeSkulls = slotData.RandomizeSkulls;
+                Core.data.l1switch = slotData.RandomizeLimboSwitches;
+                Core.data.l7switch = slotData.RandomizeViolenceSwitches;
+#nullable restore
 
                 TryGetStart(ref Core.data.unlockedLevels, success.SlotData, "0-1");
                 TryGetGoal(ref Core.data.goal, success.SlotData, "6-2");
 
-                TryGetSlotDataValue(ref Core.data.goalRequirement, success.SlotData, "goal_requirement", 15);
-                TryGetSlotDataValue(ref Core.data.perfectGoal, success.SlotData, "perfect_goal", false);
                 TryGetEnemyOption(ref Core.data.enemyRewards, success.SlotData, "enemy_rewards", EnemyOptions.Disabled);
-                TryGetSlotDataValue(ref Core.data.challengeRewards, success.SlotData, "challenge_rewards", false);
-                TryGetSlotDataValue(ref Core.data.pRankRewards, success.SlotData, "p_rank_rewards", false);
-                TryGetSlotDataValue(ref Core.data.hankRewards, success.SlotData, "hank_rewards", false);
-                TryGetSlotDataValue(ref Core.data.clashReward, success.SlotData, "randomize_clash_mode", false);
-                TryGetSlotDataValue(ref Core.data.fishRewards, success.SlotData, "fish_rewards", false);
-                TryGetSlotDataValue(ref Core.data.cleanRewards, success.SlotData, "cleaning_rewards", false);
-                TryGetSlotDataValue(ref Core.data.chessReward, success.SlotData, "chess_reward", false);
-                TryGetSlotDataValue(ref Core.data.rocketReward, success.SlotData, "rocket_race_reward", false);
                 TryGetFire2(ref Core.data.randomizeFire2, success.SlotData, "randomize_secondary_fire", Fire2Options.Disabled);
                 TryGetSlotDataValue(ref Core.data.revForm, success.SlotData, "revolver_form", WeaponForm.Standard);
                 TryGetSlotDataValue(ref Core.data.shoForm, success.SlotData, "shotgun_form", WeaponForm.Standard);
                 TryGetSlotDataValue(ref Core.data.naiForm, success.SlotData, "nailgun_form", WeaponForm.Standard);
-                TryGetSlotDataValue(ref Core.data.randomizeSkulls, success.SlotData, "randomize_skulls", false);
-                TryGetSlotDataValue(ref Core.data.l1switch, success.SlotData, "randomize_limbo_switches", false);
-                TryGetSlotDataValue(ref Core.data.l7switch, success.SlotData, "randomize_violence_switches", false);
 
                 if (Core.data.randomizeSkulls && !UIManager.createdSkullIcons) UIManager.CreateMenuSkullIcons();
                 if ((Core.data.l1switch || Core.data.l7switch) && !UIManager.createdSwitchIcons) UIManager.CreateMenuSwitchIcons();
@@ -372,17 +347,19 @@ namespace ArchipelagoULTRAKILL
                         GameProgressSaver.AddGear("naialt");
                     }
 
-                    TryGetSlotDataValue(ref Core.data.hasArm, success.SlotData, "start_with_arm", true);
-                    TryGetSlotDataValue(ref Core.data.dashes, success.SlotData, "starting_stamina", 3);
-                    TryGetSlotDataValue(ref Core.data.walljumps, success.SlotData, "starting_walljumps", 3);
-                    TryGetSlotDataValue(ref Core.data.canSlide, success.SlotData, "start_with_slide", true);
-                    TryGetSlotDataValue(ref Core.data.canSlam, success.SlotData, "start_with_slam", true);
-                    TryGetSlotDataValue(ref Core.data.multiplier, success.SlotData, "point_multiplier", 1);
+#nullable enable
+                    Core.data.hasArm = slotData.StartWithArm;
+                    Core.data.dashes = slotData.StartingStamina;
+                    Core.data.walljumps = slotData.StartingWalljumps;
+                    Core.data.canSlide = slotData.StartWithSlide;
+                    Core.data.canSlam = slotData.StartWithSlam;
+                    Core.data.multiplier = slotData.PointMultiplier;
+                    Core.data.musicRandomizer = slotData.MusicRandomizer;
+                    Core.data.cybergrindHints = slotData.CybergrindHints;
+                    Core.data.deathLink = slotData.DeathLink;
+#nullable restore
 
-                    TryGetSlotDataValue(ref Core.data.musicRandomizer, success.SlotData, "music_randomizer", false);
                     if (Core.data.musicRandomizer) Core.data.music = JsonConvert.DeserializeObject<Dictionary<string, string>>(success.SlotData["music"].ToString());
-
-                    TryGetSlotDataValue(ref Core.data.cybergrindHints, success.SlotData, "cybergrind_hints", true);
 
                     try { ConfigManager.uiColorRandomizer.value = (ColorOptions)Enum.Parse(typeof(ColorOptions), success.SlotData["ui_color_randomizer"].ToString()); }
                     catch (KeyNotFoundException) { ConfigManager.uiColorRandomizer.value = ColorOptions.Off; }
@@ -407,8 +384,6 @@ namespace ArchipelagoULTRAKILL
 
                     if (ConfigManager.uiColorRandomizer.value != ColorOptions.Off) ColorRandomizer.RandomizeUIColors();
                     if (ConfigManager.gunColorRandomizer.value != ColorOptions.Off) ColorRandomizer.RandomizeGunColors();
-
-                    Core.data.deathLink = bool.Parse(success.SlotData["death_link"].ToString());
                 }
 
                 if (Core.data.deathLink) EnableDeathLink();

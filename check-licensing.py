@@ -30,7 +30,9 @@ IGNORED_PATHS: Set[PurePath] = \
 			PurePath("LICENSES"),
 			# Generated:
 			PurePath("client-mod") / "packages.lock.json",
+			PurePath("client-mod-source-code-generator") / "packages.lock.json",
 			PurePath(".idea"),
+			PurePath("ultrakill-archipelago.slnx"),
 		),
 	)
 

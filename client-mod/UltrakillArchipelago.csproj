@@ -1,5 +1,5 @@
 <!--
-	Copyright (c) 2025 MaybeAshleyIdk
+	Copyright (c) 2026 MaybeAshleyIdk
 	SPDX-License-Identifier: GPL-3.0-or-later
  -->
 <Project Sdk="Microsoft.NET.Sdk">
@@ -42,6 +42,19 @@
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
 			<_Parameter1>false</_Parameter1>
 		</AssemblyAttribute>
+	</ItemGroup>
+
+	<!--
+		Note that incremental generators seem to be broken for VSCode/OmniSharp.
+		It will not be able to find references to the generated declarations.
+	-->
+	<ItemGroup>
+		<ProjectReference
+			Include="../client-mod-source-code-generator/UltrakillArchipelagoSourceCodeGenerator.csproj"
+			OutputItemType="Analyzer"
+			ReferenceOutputAssembly="false" />
+
+		<AdditionalFiles Include="../shared/slot_data_schema.cfg" />
 	</ItemGroup>
 
 	<ItemGroup>
