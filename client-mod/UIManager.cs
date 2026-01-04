@@ -5,6 +5,7 @@
 
 using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New.UI;
 using HarmonyLib;
 using System;
 using System.Collections;
@@ -657,7 +658,7 @@ namespace ArchipelagoULTRAKILL
                 RectTransform locationBorderRectTransform = locationBorder.AddComponent<RectTransform>();
                 locationBorderRectTransform.anchorMax = new Vector2(1, 1);
                 locationBorderRectTransform.anchorMin = new Vector2(0, 0);
-                locationBorderRectTransform.sizeDelta = new Vector2(20, 20);
+                locationBorderRectTransform.sizeDelta = new Vector2(PrimaryPauseMenuSurface.BorderSize, PrimaryPauseMenuSurface.BorderSize);
                 Image locationBorderImage = locationBorder.AddComponent<Image>();
                 locationBorderImage.sprite = menuSprite2;
                 locationBorderImage.pixelsPerUnitMultiplier = 2;
@@ -742,7 +743,7 @@ namespace ArchipelagoULTRAKILL
                 RectTransform itemBorderRectTransform = itemBorder.AddComponent<RectTransform>();
                 itemBorderRectTransform.anchorMax = new Vector2(1, 1);
                 itemBorderRectTransform.anchorMin = new Vector2(0, 0);
-                itemBorderRectTransform.sizeDelta = new Vector2(20, 20);
+                itemBorderRectTransform.sizeDelta = new Vector2(PrimaryPauseMenuSurface.BorderSize, PrimaryPauseMenuSurface.BorderSize);
                 Image itemBorderImage = itemBorder.AddComponent<Image>();
                 itemBorderImage.sprite = menuSprite2;
                 itemBorderImage.pixelsPerUnitMultiplier = 2;
