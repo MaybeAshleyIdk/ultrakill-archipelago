@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New.UI;
 using HarmonyLib;
 
 namespace ArchipelagoULTRAKILL.Patches
@@ -14,7 +15,15 @@ namespace ArchipelagoULTRAKILL.Patches
         {
             if (Core.DataExists())
             {
-                if (Core.IsInLevel && SceneHelper.CurrentScene != "Main Menu") UIManager.CreatePauseRecents(__instance.pauseMenu);
+                if (Core.IsInLevel && SceneHelper.CurrentScene != "Main Menu")
+                {
+#nullable enable
+                    PauseMenuElementsManager.InitializeElements(Multiworld.DeathLinkManager, __instance.pauseMenu);
+#nullable restore
+
+                    UIManager.CreatePauseRecents(__instance.pauseMenu);
+                }
+
                 if (Core.CurrentLevelHasSkulls) UIManager.CreatePauseSkullIcons(__instance.pauseMenu);
                 if (Core.CurrentLevelHasSwitches) UIManager.CreatePauseSwitchIcons(__instance.pauseMenu);
             }

@@ -104,6 +104,17 @@ namespace ArchipelagoULTRAKILL.New
 			return manager;
 		}
 
+		public DeathLinkManager.Status? GetStatus()
+		{
+			StartedState? startedState = this.startedState;
+			if (startedState is null) return null;
+
+			return new DeathLinkManager.Status(
+				deathLinkThreshold: startedState.DeathLinkThreshold,
+				nonDeathLinkPlayerDeathsCount: startedState.NonDeathLinkPlayerDeathsCount
+			);
+		}
+
 		public DeathLink? ConsumeQueuedDeathLink()
 		{
 			return this.startedState?.QueuedDeathLink?.Consume();

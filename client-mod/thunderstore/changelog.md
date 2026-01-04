@@ -10,7 +10,8 @@
 ### Added ###
 
 * **Death link threshold**  
-  The number of deaths that are required to send a death link (default 3)
+  The number of deaths that are required to send a death link. (default 3)  
+  How many deaths are left can be seen on the pause menu
 
 ### Changed ###
 

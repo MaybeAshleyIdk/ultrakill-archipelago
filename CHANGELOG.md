@@ -17,7 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 * Added a manifest to the APWorld
 * **Death link threshold**  
-  The number of deaths that are required to send a death link (default 3)
+  The number of deaths that are required to send a death link. (default 3)  
+  How many deaths are left can be seen on the pause menu
 
 ### Changed ###
 
