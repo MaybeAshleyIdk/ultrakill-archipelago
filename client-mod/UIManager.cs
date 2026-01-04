@@ -6,6 +6,7 @@
 using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Components;
 using ArchipelagoULTRAKILL.New.UI;
+using ArchipelagoULTRAKILL.New.Utils;
 using HarmonyLib;
 using System;
 using System.Collections;
@@ -818,16 +819,18 @@ namespace ArchipelagoULTRAKILL
                 yPos = -260;
                 ySize = 90;
             }
-            pauseContainer = new GameObject() { name = "Icons BG" };
-            pauseContainer.transform.SetParent(pauseMenu.transform);
-            pauseContainer.transform.localPosition = new Vector3(0, yPos, 0);
-            pauseContainer.transform.localScale = Vector3.one;
-            pauseContainer.AddComponent<RectTransform>().sizeDelta = new Vector2(50, ySize);
-            Image bgImage = pauseContainer.AddComponent<Image>();
-            bgImage.sprite = menuSprite1;
-            bgImage.pixelsPerUnitMultiplier = 5;
-            bgImage.type = Image.Type.Sliced;
-            bgImage.color = new Color(0, 0, 0, 0.7843f);
+#nullable enable
+            pauseContainer = pauseMenu
+                .AddChild(
+                    name: "Icons BG",
+                    relativeX: 0.0f,
+                    relativeY: yPos,
+                    new SecondaryPauseMenuSurface.Data(
+                        width: 50,
+                        height: ySize
+                    )
+                ).GameObject;
+#nullable restore
         }
 
         public static void CreatePauseSkullIcons(GameObject pauseMenu)
