@@ -5,11 +5,9 @@
 
 # ULTRAKILL Archipelago APWorld #
 
-<!-- This stays commented out until the project root README actually contains the user setup guide.
 > [!IMPORTANT]
 > **This is developer documentation!**  
 > If you are a user that just wants to install the APWorld, then refer to [the project root README file](../README.md).
--->
 
 ## Development Setup ##
 

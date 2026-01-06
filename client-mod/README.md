@@ -5,11 +5,9 @@
 
 # ULTRAKILL Archipelago Client Mod #
 
-<!-- This stays commented out until the project root README actually contains the user setup guide.
 > [!IMPORTANT]
 > **This is developer documentation!**  
 > If you are a user that just wants to install the mod, then refer to [the project root README file](../README.md).
--->
 
 The client mod is written as a [BepInEx] plugin.
 Basic knowledge about how BepInEx plugins work and how they are installed is required.

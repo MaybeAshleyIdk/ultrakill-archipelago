@@ -32,8 +32,6 @@ killing a type of enemy for the first time and more.
 The goal is to complete one mission that gets chosen beforehand.  
 This goal mission is unlocked after completing a certain number of other missions.
 
-<!-- This stays commented out until the links work, i.e.: until everything is published.
-
 ## Starting a Run ##
 
 > Note that this short guide only covers the client mod.  
@@ -54,8 +52,6 @@ Once you've entered all the info, click on `CONNECT`.
 You can back out of the options and starting playing!
 
 [NoTutorial]: <https://thunderstore.io/c/ultrakill/p/TRPG/NoTutorial/> "NoTutorial | Thunderstore - The ULTRAKILL Mod Database"
-
--->
 
 ## Console Commands ##
 

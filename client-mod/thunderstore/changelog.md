@@ -5,7 +5,9 @@
 
 <!-- markdownlint-disable first-line-heading no-duplicate-heading -->
 
-## Unreleased ##
+## v0.1.0 - 2026-01-06 ##
+
+Initial release of the fork.
 
 ### Added ###
 

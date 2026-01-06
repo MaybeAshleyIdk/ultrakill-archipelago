@@ -21,12 +21,10 @@
 >
 > All that to say that I'm massively thankful to the original author and also impressed for creating the original version.
 
-<!--
-[version_shield]: <https://img.shields.io/badge/version-{{CURRENT_VERSION_NAME}}-informational.svg>
-[release_page]: <https://github.com/MaybeAshleyIdk/ultrakill-archipelago/releases/tag/v{{CURRENT_VERSION_NAME}}> "GitHub Release page for version {{CURRENT_VERSION_NAME}}"
-[![version: {{CURRENT_VERSION_NAME}}][version_shield]][release_page]
+[version_shield]: <https://img.shields.io/badge/version-0.1.0-informational.svg>
+[release_page]: <https://github.com/MaybeAshleyIdk/ultrakill-archipelago/releases/tag/v0.1.0> "GitHub Release page for version 0.1.0"
+[![version: 0.1.0][version_shield]][release_page]
 [![Changelog](https://img.shields.io/badge/-Changelog-informational.svg)](./CHANGELOG.md "Changelog")
--->
 
 Adds [ULTRAKILL] support to [Archipelago].
 
@@ -51,8 +49,6 @@ killing a type of enemy for the first time and more.
 
 The goal is to complete one mission that gets chosen beforehand.  
 This goal mission is unlocked after completing a certain number of other missions.
-
-<!-- This stays commented out until the links work, i.e.: until everything is published.
 
 ## Client Mod Setup ##
 
@@ -110,5 +106,3 @@ The console can be opened by pressing `F8` in the game.
 [BepInEx]: <https://docs.bepinex.dev/articles/user_guide/installation/index.html> "Installing BepInEx | BepInEx Docs"
 [PluginConfigurator]: <https://github.com/eternalUnion/UKPluginConfigurator> "eternalUnion/UKPluginConfigurator"
 [Download the Thunderstore package ZIP file]: <https://github.com/MaybeAshleyIdk/ultrakill-archipelago/releases/download/v0.1.0/MaybeAshleyIdk-ULTRArchipelago-0.1.0.zip>
-
--->
