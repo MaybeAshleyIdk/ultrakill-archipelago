@@ -5,13 +5,6 @@
 
 namespace ArchipelagoULTRAKILL.Structures
 {
-    public enum LevelType
-    {
-        Normal,
-        Secret,
-        Prime
-    }
-
     public enum MusicType
     {
         Skip,
