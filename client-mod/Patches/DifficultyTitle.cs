@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace ArchipelagoULTRAKILL.Patches
         public static void Postfix(DifficultyTitle __instance)
         {
             Traverse traverse = Traverse.Create(__instance);
-            if (Core.DataExists() && __instance.lines && SceneHelper.CurrentScene == "Main Menu")
+            if (Core.DataExists() && __instance.lines && SceneId.MainMenu.IsCurrent())
             {
                 if (traverse.Field<TMP_Text>("txt2").Value != null)
                 {

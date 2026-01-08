@@ -6,6 +6,7 @@
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New;
 using ArchipelagoULTRAKILL.Structures;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -223,7 +224,8 @@ namespace ArchipelagoULTRAKILL
         public static void CheckLocation(string loc)
         {
             bool isCheating = AssistController.Instance.cheatsEnabled;
-            if (SceneHelper.CurrentScene == "CreditsMuseum2") isCheating = false;
+            SceneId currentSceneId = CurrentScene.Id;
+            if (currentSceneId == SceneId.DeveloperMuseum) isCheating = false;
 
             if (!isCheating)
             {
@@ -231,7 +233,7 @@ namespace ArchipelagoULTRAKILL
 
                 if (locations.ContainsKey(loc) && Multiworld.Authenticated)
                 {
-                    if (SceneHelper.CurrentScene != "Level 7-S") Core.Logger.LogInfo($"Checking location \"{loc}\" | {locations[loc]}");
+                    if (currentSceneId != SceneId.MissionViolenceS) Core.Logger.LogInfo($"Checking location \"{loc}\" | {locations[loc]}");
                     Multiworld.Session.Locations.CompleteLocationChecks(locations[loc]);
                 }
                 else Core.Logger.LogWarning("Location \"" + loc + "\" does not exist.");
@@ -377,17 +379,20 @@ namespace ArchipelagoULTRAKILL
 
                     case UKType.Skull:
                         if (!Core.data.randomizeSkulls) return;
+
+                        SceneId currentSceneId = CurrentScene.Id;
+
                         if (item.itemName.Contains("1-4"))
                         {
                             if (Core.data.unlockedSkulls1_4 == 4) return;
                             Core.data.unlockedSkulls1_4++;
-                            if (SceneHelper.CurrentScene == "Level 1-4") LevelManager.ActivateSkull(LevelManager.skulls.ElementAt(Core.data.unlockedSkulls1_4 - 1).Value);
+                            if (currentSceneId == SceneId.MissionLimbo4) LevelManager.ActivateSkull(LevelManager.skulls.ElementAt(Core.data.unlockedSkulls1_4 - 1).Value);
                         }
                         else if (item.itemName.Contains("5-1"))
                         {
                             if (Core.data.unlockedSkulls5_1 == 3) return;
                             Core.data.unlockedSkulls5_1++;
-                            if (SceneHelper.CurrentScene == "Level 5-1") LevelManager.ActivateSkull(LevelManager.skulls.ElementAt(Core.data.unlockedSkulls5_1 - 1).Value);
+                            if (currentSceneId == SceneId.MissionWrath1) LevelManager.ActivateSkull(LevelManager.skulls.ElementAt(Core.data.unlockedSkulls5_1 - 1).Value);
                         }
                         else if (item.itemName.Contains("0-S"))
                         {
@@ -409,12 +414,12 @@ namespace ArchipelagoULTRAKILL
                             Core.data.unlockedSkulls.Add(skull);
                         }
 
-                        if (SceneHelper.CurrentScene == "Level 0-S")
+                        if (currentSceneId == SceneId.MissionPreludeS)
                         {
                             if (item.itemName == "Blue Skull (0-S)") LevelManager.ActivateSkull(LevelManager.skulls["SkullBlue"]);
                             else if (item.itemName == "Red Skull (0-S)") LevelManager.ActivateSkull(LevelManager.skulls["SkullRed"]);
                         }
-                        else if (SceneHelper.CurrentScene == "Level 7-S")
+                        else if (currentSceneId == SceneId.MissionViolenceS)
                         {
                             if (item.itemName == "Blue Skull (7-S)") LevelManager.ActivateSkull(LevelManager.skulls["SkullBlue"]);
                             else if (item.itemName == "Red Skull (7-S)") LevelManager.ActivateSkull(LevelManager.skulls["SkullRed"]);
@@ -432,7 +437,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
 
-                        if (SceneHelper.CurrentScene == "Main Menu")
+                        if (currentSceneId == SceneId.MainMenu)
                         {
                             foreach (SkullIcon skullIcon in Object.FindObjectsOfType<SkullIcon>())
                             {
@@ -656,7 +661,7 @@ namespace ArchipelagoULTRAKILL
                     color = color,
                     message = hint
                 });
-                if (!UIManager.displayingMessage && (Core.IsPlaying || SceneHelper.CurrentScene == "Endless")) Core.uim.StartCoroutine("DisplayMessage");
+                if (!UIManager.displayingMessage && (Core.IsPlaying || SceneId.CyberGrind.IsCurrent())) Core.uim.StartCoroutine("DisplayMessage");
             }
             else
             {

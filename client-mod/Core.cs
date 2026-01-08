@@ -14,6 +14,7 @@ using System.IO;
 using Newtonsoft.Json;
 using ArchipelagoULTRAKILL.Structures;
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New;
 using BepInEx.Logging;
 using System.Reflection;
 using UnityEngine.AddressableAssets;
@@ -119,8 +120,9 @@ namespace ArchipelagoULTRAKILL
         {
             get
             {
-                if (SceneHelper.CurrentScene.Contains("-S")) return true;
-                else return SceneHelper.CurrentScene.Contains("Level ") && !SceneHelper.IsSceneRankless;
+                SceneId currentSceneId = CurrentScene.Id;
+                if (currentSceneId.IsSecretMission()) return true;
+                else return currentSceneId.IsMission() && !SceneHelper.IsSceneRankless;
             }
         }
 
@@ -128,14 +130,17 @@ namespace ArchipelagoULTRAKILL
         {
             get
             {
-                if (SceneHelper.CurrentScene == "Level 0-S") return secretMissionInfos[0];
-                else if (SceneHelper.CurrentScene == "Level 1-S") return secretMissionInfos[1];
-                else if (SceneHelper.CurrentScene == "Level 2-S") return secretMissionInfos[2];
-                else if (SceneHelper.CurrentScene == "Level 4-S") return secretMissionInfos[3];
-                else if (SceneHelper.CurrentScene == "Level 5-S") return secretMissionInfos[4];
-                else if (SceneHelper.CurrentScene == "Level 7-S") return secretMissionInfos[5];
-                else if (CurrentLevelHasInfo) return GetLevelInfo(SceneHelper.CurrentLevelNumber);
-                else return null;
+                return CurrentScene.Id switch
+                {
+                    SceneId.MissionPreludeS => secretMissionInfos[0],
+                    SceneId.MissionLimboS => secretMissionInfos[1],
+                    SceneId.MissionLustS => secretMissionInfos[2],
+                    SceneId.MissionGreedS => secretMissionInfos[3],
+                    SceneId.MissionWrathS => secretMissionInfos[4],
+                    SceneId.MissionViolenceS => secretMissionInfos[5],
+                    _ when CurrentLevelHasInfo => GetLevelInfo(SceneHelper.CurrentLevelNumber),
+                    _ => null,
+                };
             }
         }
 
@@ -230,7 +235,9 @@ namespace ArchipelagoULTRAKILL
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (SceneHelper.CurrentScene == "Intro" || SceneHelper.CurrentScene == "Bootstrap" || SceneHelper.CurrentScene == null) return;
+            SceneId currentSceneId = CurrentScene.Id;
+
+            if (currentSceneId == SceneId.Unknown) return;
 
             if (obj == null)
             {
@@ -262,7 +269,7 @@ namespace ArchipelagoULTRAKILL
             if (ConfigManager.uiColorRandomizer.value == ColorOptions.EveryLoad) ColorRandomizer.RandomizeUIColors();
             if (ConfigManager.gunColorRandomizer.value == ColorOptions.EveryLoad) ColorRandomizer.RandomizeGunColors();
 
-            if (SceneHelper.CurrentScene == "Main Menu")
+            if (currentSceneId == SceneId.MainMenu)
             {
                 bool dataExists = DataExists();
 
@@ -297,15 +304,15 @@ namespace ArchipelagoULTRAKILL
                 UIManager.CreateMessageUI();
                 //if (data.musicRandomizer && CurrentLevelHasInfo && CurrentLevelInfo.Music > MusicType.Skip && CurrentLevelInfo.Music < MusicType.Special2) AudioManager.ChangeMusic();
             }
-            else if (SceneHelper.CurrentScene == "Endless" && Multiworld.HintMode) UIManager.CreateMessageUI();
+            else if (currentSceneId == SceneId.CyberGrind && Multiworld.HintMode) UIManager.CreateMessageUI();
             if (!IsInIntro) OptionsManager.Instance.optionsMenu.gameObject.AddComponent<OptionsMenuState>();
 
             if (DataExists() && UIManager.log != null) UIManager.AdjustLogBounds();
 
-            if (DataExists() && SceneHelper.CurrentScene == "Level 0-1") LevelManager.ChangeIntro();
-            else if (DataExists() && SceneHelper.CurrentScene == "Level 1-2" && GameProgressSaver.GetGeneralProgress().nai0 == 0) LevelManager.DeactivateNailgun();
-            else if (DataExists() && (SceneHelper.CurrentScene == "Level 1-4" || SceneHelper.CurrentScene == "Level 5-3") && data.hankRewards) LevelManager.FindHank();
-            else if (DataExists() && SceneHelper.CurrentScene == "CreditsMuseum2") LevelManager.FindRocketRaceButton();
+            if (DataExists() && currentSceneId == SceneId.MissionPrelude1) LevelManager.ChangeIntro();
+            else if (DataExists() && currentSceneId == SceneId.MissionLimbo2 && GameProgressSaver.GetGeneralProgress().nai0 == 0) LevelManager.DeactivateNailgun();
+            else if (DataExists() && (currentSceneId == SceneId.MissionLimbo4 || currentSceneId == SceneId.MissionWrath3) && data.hankRewards) LevelManager.FindHank();
+            else if (DataExists() && currentSceneId == SceneId.DeveloperMuseum) LevelManager.FindRocketRaceButton();
         }
 
         public static bool DataExists()

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using ArchipelagoULTRAKILL.Structures;
 using System;
 using System.Collections.Generic;
@@ -197,9 +198,9 @@ namespace ArchipelagoULTRAKILL
             if (Core.CurrentLevelInfo.Music == MusicType.Normal) LoadMusicManagerTracks(Core.CurrentLevelInfo.Id.ToString());
             else
             {
-                switch (SceneHelper.CurrentScene)
+                switch (CurrentScene.Id)
                 {
-                    case "Level 0-5":
+                    case SceneId.MissionPrelude5:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
 
@@ -211,7 +212,7 @@ namespace ArchipelagoULTRAKILL
 
                         }
                         break;
-                    case "Level 1-1":
+                    case SceneId.MissionLimbo1:
                         LoadMusicManagerTracks("6A", true);
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -222,7 +223,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 1-2":
+                    case SceneId.MissionLimbo2:
                         LoadMusicManagerTracks("7A", true);
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -233,7 +234,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 1-4":
+                    case SceneId.MissionLimbo4:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "Music - Clair de Lune")
@@ -246,7 +247,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 2-1":
+                    case SceneId.MissionLust1:
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
                             if (changer.gameObject.name == "Cube (1)")
@@ -256,7 +257,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 2-4":
+                    case SceneId.MissionLust4:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "BossMusic")
@@ -265,7 +266,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 3-1":
+                    case SceneId.MissionGluttony1:
                         LoadMusicManagerTracks("14A");
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -276,7 +277,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 3-2":
+                    case SceneId.MissionGluttony2:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "Music 2")
@@ -289,7 +290,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 4-3":
+                    case SceneId.MissionGreed3:
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
                             if (changer.gameObject.name == "OnLight") // phase 1
@@ -320,7 +321,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 4-4":
+                    case SceneId.MissionGreed4:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "Versus 2")
@@ -330,7 +331,7 @@ namespace ArchipelagoULTRAKILL
                         }
                         break;
 
-                    case "Level 5-3":
+                    case SceneId.MissionWrath3:
                         LoadMusicManagerTracks("22A");
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -346,7 +347,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 6-1":
+                    case SceneId.MissionHeresy1:
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
                             if (changer.gameObject.name == "MusicChanger")
@@ -363,7 +364,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 6-2":
+                    case SceneId.MissionHeresy2:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "Organ")
@@ -376,7 +377,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 7-1":
+                    case SceneId.MissionViolence1:
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
                             if (changer.name == "LevelMusicStart")
@@ -406,7 +407,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 7-2":
+                    case SceneId.MissionViolence2:
                         LoadMusicManagerTracks("27A");
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -418,7 +419,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level 7-3":
+                    case SceneId.MissionViolence3:
                         LoadMusicManagerTracks("28A", true);
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
@@ -430,7 +431,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level P-1":
+                    case SceneId.MissionP1:
                         foreach (AudioSource audio in Core.FindAllComponentsInCurrentScene<AudioSource>())
                         {
                             if (audio.gameObject.name == "Chaos")
@@ -443,7 +444,7 @@ namespace ArchipelagoULTRAKILL
                             }
                         }
                         break;
-                    case "Level P-2":
+                    case SceneId.MissionP2:
                         foreach (MusicChanger changer in Core.FindAllComponentsInCurrentScene<MusicChanger>())
                         {
                             if (changer.gameObject.name == "DelayedMusicActivator")

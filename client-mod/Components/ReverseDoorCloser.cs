@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using HarmonyLib;
 using System.Collections;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace ArchipelagoULTRAKILL.Components
                     }
                 }
 
-                if (SceneHelper.CurrentScene == "Level 1-2" && !Core.data.unlockedSkulls.Contains("7_b"))
+                if (SceneId.MissionLimbo2.IsCurrent() && !Core.data.unlockedSkulls.Contains("7_b"))
                 {
                     ipz.activateOnFailure = ipz.activateOnSuccess;
                     ipz.activateOnSuccess = null;

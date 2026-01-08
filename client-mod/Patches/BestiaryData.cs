@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using ArchipelagoULTRAKILL.Structures;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -35,8 +36,9 @@ namespace ArchipelagoULTRAKILL.Patches
             {
                 if (Core.data.enemyRewards > EnemyOptions.Disabled)
                 {
-                    if (SceneHelper.CurrentScene == "Endless"
-                        || SceneHelper.CurrentScene == "uk_construct"
+                    SceneId currentSceneId = CurrentScene.Id;
+                    if (currentSceneId == SceneId.CyberGrind
+                        || currentSceneId == SceneId.Sandbox
                         || (enemy == EnemyType.V2 && StatsManager.Instance.levelNumber != 9)
                         || (enemy == EnemyType.Gabriel && StatsManager.Instance.levelNumber != 15)
                         || (enemy == EnemyType.Centaur && StatsManager.Instance.levelNumber != 29))

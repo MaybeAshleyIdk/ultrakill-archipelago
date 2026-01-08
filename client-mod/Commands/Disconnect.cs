@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using GameConsole;
 using UnityEngine.UI;
 using plog.Models;
@@ -34,7 +35,7 @@ namespace ArchipelagoULTRAKILL.Commands
                 {
                     Multiworld.Disconnect();
                     ConfigManager.connectionInfo.text = "Disconnected from server.";
-                    if (SceneHelper.CurrentScene == "Main Menu")
+                    if (SceneId.MainMenu.IsCurrent())
                     {
                         UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
                     }

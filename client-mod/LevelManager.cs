@@ -5,6 +5,7 @@
 
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New;
 using ArchipelagoULTRAKILL.Structures;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -31,20 +32,26 @@ namespace ArchipelagoULTRAKILL
             {
                 if ((item.itemType == ItemType.SkullBlue || item.itemType == ItemType.SkullRed) && item.gameObject.scene.name == SceneManager.GetActiveScene().name)
                 {
-                    if (SceneHelper.CurrentScene == "Level 7-S")
+                    switch (CurrentScene.Id)
                     {
-                        if (item.itemType == ItemType.SkullBlue && !item.transform.parent.parent.parent) continue;
-                        else if (item.itemType == ItemType.SkullRed && item.transform.parent.parent.parent.name != "Interactives") continue;
-                    }
-                    else if (SceneHelper.CurrentScene == "Level 0-E")
-                    {
-                        if (item.itemType == ItemType.SkullBlue && item.transform.parent.parent.parent) continue;
-                        else if (item.itemType == ItemType.SkullRed && item.transform.parent.parent.parent) continue;
-                    }
-                    else if (SceneHelper.CurrentScene == "Level 1-E")
-                    {
-                        if (item.itemType == ItemType.SkullBlue && item.transform.parent.parent.name != "Altar (Blue) (1)") continue;
-                        if (item.itemType == ItemType.SkullRed) continue;
+                        case SceneId.MissionViolenceS:
+                        {
+                            if (item.itemType == ItemType.SkullBlue && !item.transform.parent.parent.parent) continue;
+                            else if (item.itemType == ItemType.SkullRed && item.transform.parent.parent.parent.name != "Interactives") continue;
+                            break;
+                        }
+                        case SceneId.MissionPreludeE:
+                        {
+                            if (item.itemType == ItemType.SkullBlue && item.transform.parent.parent.parent) continue;
+                            else if (item.itemType == ItemType.SkullRed && item.transform.parent.parent.parent) continue;
+                            break;
+                        }
+                        case SceneId.MissionLimboE:
+                        {
+                            if (item.itemType == ItemType.SkullBlue && item.transform.parent.parent.name != "Altar (Blue) (1)") continue;
+                            if (item.itemType == ItemType.SkullRed) continue;
+                            break;
+                        }
                     }
 
                     if (skulls.ContainsKey(item.itemType.ToString()))
@@ -62,12 +69,12 @@ namespace ArchipelagoULTRAKILL
                 string id = Core.CurrentLevelInfo.Id.ToString();
                 if (Core.CurrentLevelInfo.Name == "0-S") id = "0S";
                 else if (Core.CurrentLevelInfo.Name == "7-S") id = "7S";
-                switch (SceneHelper.CurrentScene)
+                switch (CurrentScene.Id)
                 {
-                    case "Level 1-4":
+                    case SceneId.MissionLimbo4:
                         if (j + 1 > Core.data.unlockedSkulls1_4) DeactivateSkull(pair.Value);
                         break;
-                    case "Level 5-1":
+                    case SceneId.MissionWrath1:
                         if (j + 1 > Core.data.unlockedSkulls5_1) DeactivateSkull(pair.Value);
                         break;
                     default:
@@ -122,60 +129,63 @@ namespace ArchipelagoULTRAKILL
         {
             foreach (ItemPlaceZone ipz in Resources.FindObjectsOfTypeAll<ItemPlaceZone>())
             {
-                if (SceneHelper.CurrentScene == "Level 1-1")
+                switch (CurrentScene.Id)
                 {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "11 Nonstuff")
+                    case SceneId.MissionLimbo1:
                     {
-                        ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "11 Nonstuff")
+                        {
+                            ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 1-2")
-                {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "3 Nonstuff")
+                    case SceneId.MissionLimbo2:
                     {
-                        ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "11 Nonstuff")
+                        {
+                            ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 2-3")
-                {
-                    if (ipz.transform.parent != null && (ipz.transform.parent.name == "Altar" || ipz.transform.parent.name == "Altar (1)"))
+                    case SceneId.MissionLust3:
                     {
-                        ipz.transform.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent != null && (ipz.transform.parent.name == "Altar" || ipz.transform.parent.name == "Altar (1)"))
+                        {
+                            ipz.transform.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 4-4")
-                {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "Secret Hall")
+                    case SceneId.MissionGreed4:
                     {
-                        ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "Secret Hall")
+                        {
+                            ipz.transform.parent.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 5-2")
-                {
-                    if (ipz.transform.parent.parent != null && (ipz.transform.parent.parent.name == "6" || ipz.transform.parent.parent.name == "7B"))
+                    case SceneId.MissionWrath2:
                     {
-                        ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && (ipz.transform.parent.parent.name == "6" || ipz.transform.parent.parent.name == "7B"))
+                        {
+                            ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 5-3")
-                {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "2A4 - Skullway")
+                    case SceneId.MissionHeresy1:
                     {
-                        ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "3 - Crossroads")
+                        {
+                            ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
-                }
-                else if (SceneHelper.CurrentScene == "Level 6-1")
-                {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "3 - Crossroads")
+                    case SceneId.MissionLimboE:
                     {
-                        ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
-                    }
-                }
-                else if (SceneHelper.CurrentScene == "Level 1-E")
-                {
-                    if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "13-3 Connector")
-                    {
-                        ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        if (ipz.transform.parent.parent != null && ipz.transform.parent.parent.name == "13-3 Connector")
+                        {
+                            ipz.transform.parent.parent.gameObject.GetOrAddComponent<ReverseDoorCloser>();
+                        }
+                        break;
                     }
                 }
             }
@@ -258,7 +268,7 @@ namespace ArchipelagoULTRAKILL
 
         public static void FindRocketRaceButton()
         {
-            if (SceneHelper.CurrentScene != "CreditsMuseum2" || !Core.data.rocketReward) return;
+            if (!(SceneId.DeveloperMuseum.IsCurrent()) || !Core.data.rocketReward) return;
             GameObject.Find("/PuzzleScreen (2)/Canvas/Background/Start").AddComponent<RocketRaceCheck>();
         }
     }

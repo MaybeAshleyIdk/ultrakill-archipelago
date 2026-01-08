@@ -245,7 +245,7 @@ namespace ArchipelagoULTRAKILL.New
 			}
 
 			List<string> messages =
-				DeathLinkMessage.specialMessages.TryGetValue(SceneHelper.CurrentScene, out List<string> missionMessages)
+				DeathLinkMessage.specialMessages.TryGetValue(CurrentScene.Id, out List<string> missionMessages)
 					? missionMessages
 					: DeathLinkMessage.deathMessages;
 

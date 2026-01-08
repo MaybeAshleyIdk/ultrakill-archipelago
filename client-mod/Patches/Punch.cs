@@ -4,6 +4,7 @@
  */
 
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New;
 using HarmonyLib;
 
 namespace ArchipelagoULTRAKILL.Patches
@@ -14,7 +15,7 @@ namespace ArchipelagoULTRAKILL.Patches
         public static bool Prefix(Punch __instance)
         {
             if (PlayerHelper.CurrentPowerup == Structures.Powerup.NoArms
-                || !Core.data.hasArm && __instance.type == FistType.Standard && SceneHelper.CurrentScene != "Level 5-S")
+                || !Core.data.hasArm && __instance.type == FistType.Standard && !(SceneId.MissionWrathS.IsCurrent()))
                 return false;
             return true;
         }

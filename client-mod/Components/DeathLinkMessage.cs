@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,61 +50,61 @@ namespace ArchipelagoULTRAKILL.Components
                 "Things got too " + DifficultyName.ToLower() + " for {0}."
             };
 
-        internal static Dictionary<string, List<string>> specialMessages = new Dictionary<string, List<string>>();
+        internal static Dictionary<SceneId, List<string>> specialMessages = new Dictionary<SceneId, List<string>>();
 
         private void Awake()
         {
-            specialMessages["uk_construct"] = new List<string>()
+            specialMessages[SceneId.Sandbox] = new List<string>()
             {
                 "{0} did that on purpose.",
                 "{0} has some explaining to do."
             };
-            specialMessages["CreditsMuseum2"] = specialMessages["uk_construct"];
-            specialMessages["Level 0-S"] = new List<string>()
+            specialMessages[SceneId.DeveloperMuseum] = specialMessages[SceneId.Sandbox];
+            specialMessages[SceneId.MissionPreludeS] = new List<string>()
             {
                 "{0} got caught by something.",
                 "Something wicked this way came for {0}."
             };
-            specialMessages["Level 1-4"] = new List<string>()
+            specialMessages[SceneId.MissionLimbo4] = new List<string>()
             {
                 "V2 was too quick for {0}.",
                 "Blue {0} couldn't beat red {0}."
             };
-            specialMessages["Level 2-4"] = new List<string>()
+            specialMessages[SceneId.MissionLust4] = new List<string>()
             {
                 "{0} got crushed even though they're just a little guy.",
                 "{0} couldn't parry a punch."
             };
-            specialMessages["Level 3-2"] = new List<string>()
+            specialMessages[SceneId.MissionGluttony2] = new List<string>()
             {
                 "{0} crossed the will of God.",
                 "{0} was rended apart.",
                 "{0} beheld the power of an angel."
             };
-            specialMessages["Level 4-4"] = new List<string>()
+            specialMessages[SceneId.MissionGreed4] = new List<string>()
             {
                 "{0} had sand in their eye.",
                 "Blue {0} couldn't beat red {0}."
             };
-            specialMessages["Level 5-4"] = new List<string>()
+            specialMessages[SceneId.MissionWrath4] = new List<string>()
             {
                 "{0} got water damaged."
             };
-            specialMessages["Level 6-2"] = new List<string>()
+            specialMessages[SceneId.MissionHeresy2] = new List<string>()
             {
                 "{0} experienced perfect hatred.",
                 "{0} was ended, there and then."
             };
-            specialMessages["Level 7-4"] = new List<string>()
+            specialMessages[SceneId.MissionViolence4] = new List<string>()
             {
                 "{0} 0 - Earthmover 1000",
                 "Security threat \"{0}\" eliminated."
             };
-            specialMessages["Level P-1"] = new List<string>()
+            specialMessages[SceneId.MissionP1] = new List<string>()
             {
                 "{0}'s punishment is death."
             };
-            specialMessages["Level P-2"] = new List<string>()
+            specialMessages[SceneId.MissionP2] = new List<string>()
             {
                 "One must imagine {0} happy.",
             };

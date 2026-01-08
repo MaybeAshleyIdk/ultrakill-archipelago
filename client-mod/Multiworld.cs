@@ -45,7 +45,7 @@ namespace ArchipelagoULTRAKILL
 
         public void SetupServerCheckBlocker()
         {
-            if (SceneHelper.CurrentScene != "Main Menu") return;
+            if (!(SceneId.MainMenu.IsCurrent())) return;
 
             serverCheckBlocker = GameObject.Instantiate(OptionsManager.Instance.optionsMenu.transform.Find("Save Slots").Find("Reload Consent Blocker").gameObject, UIManager.canvas.transform).transform.GetChild(0).transform.parent.gameObject;
             serverCheckBlocker.name = "Archipelago Server Check Blocker";
@@ -517,7 +517,7 @@ namespace ArchipelagoULTRAKILL
             ConfigManager.hintMode.interactable = true;
             ConfigManager.chat.interactable = false;
             if (Session != null && Session.Socket != null) Session.Socket.DisconnectAsync();
-            if (SceneHelper.CurrentScene == "Main Menu") UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
+            if (SceneId.MainMenu.IsCurrent()) UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
             //GameConsole.Console.Instance.PrintLine("Disconnected from Archipelago server.");
             //Debug.Log("Disconnected from Archipelago server.");
             UIManager.SetLogText("");

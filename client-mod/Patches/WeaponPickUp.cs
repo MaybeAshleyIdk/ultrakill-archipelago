@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using HarmonyLib;
 
 namespace ArchipelagoULTRAKILL.Patches
@@ -13,7 +14,8 @@ namespace ArchipelagoULTRAKILL.Patches
     {
         public static bool Prefix(WeaponPickUp __instance)
         {
-            if (Core.DataExists() && SceneHelper.CurrentScene != "Level 5-S" && SceneHelper.CurrentScene != "Level 7-S")
+            SceneId currentSceneId = CurrentScene.Id;
+            if (Core.DataExists() && currentSceneId != SceneId.MissionWrathS && currentSceneId != SceneId.MissionViolenceS)
             {
                 Traverse wpu = Traverse.Create(__instance);
                 wpu.Field<bool>("activated").Value = true;

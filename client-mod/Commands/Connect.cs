@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using GameConsole;
 using plog.Models;
 
@@ -40,7 +41,7 @@ namespace ArchipelagoULTRAKILL.Commands
             }
             else
             {
-                if (SceneHelper.CurrentScene != "Main Menu")
+                if (!(SceneId.MainMenu.IsCurrent()))
                 {
                     Core.PLogger.Info("Can't do that right now. Can only connect to an Archipelago server on the main menu.");
                     return;

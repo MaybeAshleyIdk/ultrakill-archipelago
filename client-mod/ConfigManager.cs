@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+using ArchipelagoULTRAKILL.New;
 using PluginConfig.API;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Fields;
@@ -158,7 +159,7 @@ namespace ArchipelagoULTRAKILL
                 {
                     connectionInfo.text = "Already connected to server.";
                 }
-                else if (SceneHelper.CurrentScene != "Main Menu")
+                else if (!(SceneId.MainMenu.IsCurrent()))
                 {
                     connectionInfo.text = "Can only connect to an Archipelago server on the main menu.";
                 }
@@ -193,8 +194,8 @@ namespace ArchipelagoULTRAKILL
                     connectionInfo.text = "Disconnected from server.";
 #nullable enable
                     SyncDeathLinkFieldsState();
+                    if (SceneId.MainMenu.IsCurrent())
 #nullable restore
-                    if (SceneHelper.CurrentScene == "Main Menu")
                     {
                         UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
                     }

@@ -4,6 +4,7 @@
  */
 
 using ArchipelagoULTRAKILL.Components;
+using ArchipelagoULTRAKILL.New;
 using ArchipelagoULTRAKILL.Structures;
 using HarmonyLib;
 
@@ -16,8 +17,9 @@ namespace ArchipelagoULTRAKILL.Patches
         {
             if (Core.DataExists())
             {
+                SceneId currentSceneId = CurrentScene.Id;
                 //if (Core.data.musicRandomizer && Core.CurrentLevelHasInfo && Core.CurrentLevelInfo.Music == MusicType.Special2) AudioManager.ChangeMusic();
-                if (PlayerHelper.Instance && !SceneHelper.CurrentScene.Contains("-S") && !(SceneHelper.CurrentScene == "CreditsMuseum2" || SceneHelper.CurrentScene == "uk_construct")) PlayerHelper.Instance.CanGetPowerup = true;
+                if (PlayerHelper.Instance && !currentSceneId.IsSecretMission() && !(currentSceneId == SceneId.DeveloperMuseum || currentSceneId == SceneId.Sandbox)) PlayerHelper.Instance.CanGetPowerup = true;
             }
         }
     }
