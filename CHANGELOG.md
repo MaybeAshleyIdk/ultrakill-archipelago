@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased ##
+
+### Fixed ###
+
+* Fixed in which mission Very Cancerous Rodent is in logic [upstream patch]
+
 ## [v0.1.0] - 2026-01-06 ##
 
 Initial release of the fork.
