@@ -442,7 +442,6 @@ class SlotDataSchemaEntryTypes:
 	@final
 	@dataclass(frozen=True)
 	class Bool(SlotDataSchemaEntryTypeData):
-		pass
 
 		@override
 		@staticmethod
