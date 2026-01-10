@@ -219,22 +219,22 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 
 		#endregion
 
-		public static Dictionary<string, SlotDataSchemaEntry> Parse(TextLineCollection textLines)
+		public static SlotDataSchema? Parse(TextLineCollection textLines)
 		{
-			var schema = new Dictionary<string, SlotDataSchemaEntry>();
+			var schemaEntries = new Dictionary<string, SlotDataSchemaEntry>();
 
 			PartialEntry currentEntry = null;
 
 			foreach (TextLine line in textLines)
 			{
-				bool isValidLine = ProcessLine(line.ToString(), ref currentEntry, ref schema);
+				bool isValidLine = ProcessLine(line.ToString(), ref currentEntry, ref schemaEntries);
 				if (!isValidLine)
 				{
 					return null;
 				}
 			}
 
-			return schema;
+			return new SlotDataSchema(schemaEntries);
 		}
 
 		private static bool ProcessLine(

@@ -279,7 +279,7 @@ namespace {{NAMESPACE_NAME}}
 			TextLineCollection slotDataSchemaTextLines
 		)
 		{
-			Dictionary<string, SlotDataSchemaEntry> schema = SlotDataSchemaParser.Parse(slotDataSchemaTextLines)
+			SlotDataSchema schema = SlotDataSchemaParser.Parse(slotDataSchemaTextLines)
 				?? throw new Exception("Invalid schema");
 
 			string fileContents = FileContentsTemplate.SplitLines()
@@ -316,9 +316,9 @@ namespace {{NAMESPACE_NAME}}
 			context.AddSource($"{NamespaceName}.SlotData.g.cs", fileContents);
 		}
 
-		private static string GenerateClassFieldsCode(Dictionary<string, SlotDataSchemaEntry> schema)
+		private static string GenerateClassFieldsCode(SlotDataSchema schema)
 		{
-			return schema
+			return schema.Entries
 				.Select((string key, SlotDataSchemaEntry entry) =>
 				{
 					var code = "";
@@ -340,29 +340,27 @@ namespace {{NAMESPACE_NAME}}
 				.JoinToString(separator: "\n\n");
 		}
 
-		private static string GenerateClassConstructorParametersCode(Dictionary<string, SlotDataSchemaEntry> schema)
+		private static string GenerateClassConstructorParametersCode(SlotDataSchema schema)
 		{
-			return schema
+			return schema.Entries
 				// language=c#
 				.Select((string key, SlotDataSchemaEntry entry) => $"{entry.TypeData.DotNetTypeName} {CamelCase(key)}")
 				// language=c#
 				.JoinToString(",\n");
 		}
 
-		private static string GenerateClassConstructorFieldAssignmentsCodeCode(
-			Dictionary<string, SlotDataSchemaEntry> schema
-		)
+		private static string GenerateClassConstructorFieldAssignmentsCodeCode(SlotDataSchema schema)
 		{
-			return schema.Keys
+			return schema.Entries.Keys
 				// language=c#
 				.Select((string key) => $"this.{PascalCase(key)} = {CamelCase(key)};")
 				// language=c#
 				.JoinToString("\n");
 		}
 
-		private static string GenerateClassToStringFieldsCode(Dictionary<string, SlotDataSchemaEntry> schema)
+		private static string GenerateClassToStringFieldsCode(SlotDataSchema schema)
 		{
-			return schema
+			return schema.Entries
 				.Select((string key, SlotDataSchemaEntry entry) =>
 				{
 					string fieldName = PascalCase(key);
@@ -374,9 +372,9 @@ namespace {{NAMESPACE_NAME}}
 				.JoinToString("\nstr += \", \";\n");
 		}
 
-		private static string GenerateClassFactoryFunctionVariablesCode(Dictionary<string, SlotDataSchemaEntry> schema)
+		private static string GenerateClassFactoryFunctionVariablesCode(SlotDataSchema schema)
 		{
-			return schema
+			return schema.Entries
 				.Select((string key, SlotDataSchemaEntry entry) =>
 				{
 					var code = "";
@@ -433,11 +431,9 @@ namespace {{NAMESPACE_NAME}}
 				.JoinToString("\n\n");
 		}
 
-		private static string GenerateClassFactoryFunctionConstructorArgumentsCode(
-			Dictionary<string, SlotDataSchemaEntry> schema
-		)
+		private static string GenerateClassFactoryFunctionConstructorArgumentsCode(SlotDataSchema schema)
 		{
-			return schema.Keys
+			return schema.Entries.Keys
 				.Select(CamelCase)
 				// language=c#
 				.JoinToString(",\n");
