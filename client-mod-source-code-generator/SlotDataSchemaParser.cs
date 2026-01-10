@@ -4,12 +4,14 @@
  */
 
 using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace UltrakillArchipelago.SourceCodeGenerator
 {
-	internal static class SlotDataSchemaParser
+	internal sealed class SlotDataSchemaParser
 	{
 		private static class PropertyNames
 		{
@@ -219,22 +221,102 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 
 		#endregion
 
+		#region state
+
+		private interface State
+		{
+		}
+
+		#endregion
+
+		private readonly List<SlotDataEnum> enums = new List<SlotDataEnum>();
+
+		private readonly Dictionary<string, SlotDataSchemaEntry>
+			entries = new Dictionary<string, SlotDataSchemaEntry>();
+
+		private State currentState = null;
+
+		private SlotDataSchemaParser()
+		{
+		}
+
+		private bool ProcessLine(string line)
+		{
+			int commentCharIndex = line.IndexOf('#');
+			if (commentCharIndex >= 0)
+			{
+				line = line.Remove(startIndex: commentCharIndex);
+			}
+
+			line = line.Trim();
+			if (line == "") return true;
+
+			if (currentEntry is null)
+			{
+				PartialEntry entry = ProcessEntryHeadLine(line);
+
+				if (!(entry is null))
+				{
+					currentEntry = entry;
+				}
+
+				return !(entry is null);
+			}
+
+			Match descriptionMatch = Regex.Match(line, @"^\(i\)(.*)$");
+			if (descriptionMatch != Match.Empty)
+			{
+				string descriptionLine = descriptionMatch.Groups[1].Value.Trim();
+
+				if (descriptionLine == "") return false;
+
+				currentEntry.AddDescriptionLine(descriptionLine);
+
+				return true;
+			}
+
+			Match propertyMatch = Regex.Match(line, @"^([a-z][a-z0-9_]*)\s*=\s*(.+)$");
+			if (propertyMatch != Match.Empty)
+			{
+				string propertyName = propertyMatch.Groups[1].Value;
+				string propertyValue = propertyMatch.Groups[2].Value.Trim();
+
+				return currentEntry.InitProperty(propertyName, propertyValue);
+			}
+
+			if (line == "}")
+			{
+				SlotDataSchemaEntryTypeData typeData = currentEntry.ToTypeDataOrNull();
+				if (typeData is null) return false;
+
+				schema[currentEntry.Key] = new SlotDataSchemaEntry(typeData, currentEntry.Description);
+				currentEntry = null;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private SlotDataSchema? Finish()
+		{
+			return new SlotDataSchema(this.enums.ToImmutableList(), this.entries.ToImmutableDictionary());
+		}
+
 		public static SlotDataSchema? Parse(TextLineCollection textLines)
 		{
-			var schemaEntries = new Dictionary<string, SlotDataSchemaEntry>();
-
-			PartialEntry currentEntry = null;
+			var parser = new SlotDataSchemaParser();
 
 			foreach (TextLine line in textLines)
 			{
-				bool isValidLine = ProcessLine(line.ToString(), ref currentEntry, ref schemaEntries);
+				bool isValidLine = parser.ProcessLine(line.ToString());
 				if (!isValidLine)
 				{
 					return null;
 				}
 			}
 
-			return new SlotDataSchema(schemaEntries);
+			return parser.Finish();
 		}
 
 		private static bool ProcessLine(
@@ -297,6 +379,11 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 			}
 
 			return false;
+		}
+
+		private void Foo(string line)
+		{
+			Match enumHeadMatch = Regex.Match(line, @"^enum\s+([a-zA-Z0-9_]+)\s*\{$");
 		}
 
 		private static PartialEntry ProcessEntryHeadLine(string line)

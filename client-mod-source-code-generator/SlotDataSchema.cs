@@ -4,16 +4,23 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace UltrakillArchipelago.SourceCodeGenerator
 {
 	internal readonly struct SlotDataSchema
 	{
+		public readonly ImmutableList<SlotDataEnum> Enums;
 		public readonly ImmutableDictionary<string, SlotDataSchemaEntry> Entries;
 
-		public SlotDataSchema(ImmutableDictionary<string, SlotDataSchemaEntry> entries)
+		public SlotDataSchema(
+			ImmutableList<SlotDataEnum> enums,
+			ImmutableDictionary<string, SlotDataSchemaEntry> entries
+		)
 		{
+			this.Enums = enums ?? throw new ArgumentNullException(paramName: nameof(enums));
 			this.Entries = entries ?? throw new ArgumentNullException(paramName: nameof(entries));
 		}
 	}

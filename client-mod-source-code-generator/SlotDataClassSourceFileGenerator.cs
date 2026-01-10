@@ -332,8 +332,10 @@ namespace {{NAMESPACE_NAME}}
 ";
 					}
 
+					string dotNetTypeName = entry.TypeData.DetermineDotNetTypeName(NamespaceName);
+
 					// language=c#
-					code += $"public readonly {entry.TypeData.DotNetTypeName} {PascalCase(key)};";
+					code += $"public readonly {dotNetTypeName} {PascalCase(key)};";
 
 					return code;
 				})
@@ -343,8 +345,13 @@ namespace {{NAMESPACE_NAME}}
 		private static string GenerateClassConstructorParametersCode(SlotDataSchema schema)
 		{
 			return schema.Entries
-				// language=c#
-				.Select((string key, SlotDataSchemaEntry entry) => $"{entry.TypeData.DotNetTypeName} {CamelCase(key)}")
+				.Select((string key, SlotDataSchemaEntry entry) =>
+				{
+					string dotNetTypeName = entry.TypeData.DetermineDotNetTypeName(NamespaceName);
+
+					// language=c#
+					return $"{dotNetTypeName} {CamelCase(key)}";
+				})
 				// language=c#
 				.JoinToString(",\n");
 		}
@@ -380,7 +387,7 @@ namespace {{NAMESPACE_NAME}}
 					var code = "";
 
 					// language=c#
-					code += $"{entry.TypeData.DotNetTypeName} {CamelCase(key)} = ";
+					code += $"{entry.TypeData.DetermineDotNetTypeName(NamespaceName)} {CamelCase(key)} = ";
 
 					switch (entry.TypeData)
 					{
@@ -420,6 +427,11 @@ namespace {{NAMESPACE_NAME}}
 		fallbackValue: ""{stringData.FallbackValue}"",
 		logger
 	);";
+							break;
+						}
+						case SlotDataSchemaEntryTypes.Enum enumData:
+						{
+							code += ";"; // TODO
 							break;
 						}
 						default: throw new Exception($"Unhandled entry type: {entry.TypeData.GetType()}");

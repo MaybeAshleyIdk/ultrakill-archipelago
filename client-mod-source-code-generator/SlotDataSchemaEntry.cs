@@ -9,7 +9,9 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 {
 	internal interface SlotDataSchemaEntryTypeData
 	{
-		string DotNetTypeName { get; }
+		[Obsolete] string DotNetTypeName { get; }
+
+		string DetermineDotNetTypeName(string namespaceName);
 	}
 
 	internal readonly struct SlotDataSchemaEntry
@@ -41,12 +43,15 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 		internal readonly struct Bool : SlotDataSchemaEntryTypeData
 		{
 			public string DotNetTypeName => "bool";
+
 			public readonly bool FallbackValue;
 
 			public Bool(bool fallbackValue)
 			{
 				this.FallbackValue = fallbackValue;
 			}
+
+			public string DetermineDotNetTypeName(string namespaceName) => "bool";
 		}
 
 		internal readonly struct Int32 : SlotDataSchemaEntryTypeData
@@ -62,6 +67,8 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 				this.MaxValue = maxValue;
 				this.FallbackValue = fallbackValue;
 			}
+
+			public string DetermineDotNetTypeName(string namespaceName) => "int";
 		}
 
 		internal readonly struct String : SlotDataSchemaEntryTypeData
@@ -73,6 +80,27 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 			{
 				this.FallbackValue = fallbackValue
 					?? throw new ArgumentException(message: "Fallback value is null", paramName: nameof(fallbackValue));
+			}
+
+			public string DetermineDotNetTypeName(string namespaceName) => "string";
+		}
+
+		internal readonly struct Enum : SlotDataSchemaEntryTypeData
+		{
+			public readonly SlotDataEnumName Name;
+			public readonly SlotDataEnumEntryName FallbackEntryName;
+
+			public string DotNetTypeName => throw new NotImplementedException();
+
+			public Enum(SlotDataEnumName name, SlotDataEnumEntryName fallbackEntryName)
+			{
+				this.Name = name;
+				this.FallbackEntryName = fallbackEntryName;
+			}
+
+			public string DetermineDotNetTypeName(string namespaceName)
+			{
+				return $"global::{namespaceName}.{this.Name}";
 			}
 		}
 	}
