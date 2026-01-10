@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace UltrakillArchipelago.SourceCodeGenerator
 {
-	internal static class SlotDataSchema
+	internal static class SlotDataSchemaParser
 	{
 		private static class PropertyNames
 		{

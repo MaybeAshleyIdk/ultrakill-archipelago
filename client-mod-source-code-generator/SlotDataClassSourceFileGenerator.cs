@@ -279,7 +279,7 @@ namespace {{NAMESPACE_NAME}}
 			TextLineCollection slotDataSchemaTextLines
 		)
 		{
-			Dictionary<string, SlotDataSchemaEntry> schema = SlotDataSchema.Parse(slotDataSchemaTextLines)
+			Dictionary<string, SlotDataSchemaEntry> schema = SlotDataSchemaParser.Parse(slotDataSchemaTextLines)
 				?? throw new Exception("Invalid schema");
 
 			string fileContents = FileContentsTemplate.SplitLines()
