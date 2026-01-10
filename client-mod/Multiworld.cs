@@ -174,6 +174,30 @@ namespace ArchipelagoULTRAKILL
             Core.data.unlockedSkulls1_4 = 0;
             Core.data.unlockedSkulls5_1 = 0;
 
+            ServerConnectionManager connectionManager = new ServerConnectionManagerImpl(logger: Core.Logger);
+
+            ServerConnectionManager.ConnectResult result =
+                connectionManager.ConnectAsync(
+                    hostname: Core.data.host_name,
+                    port: 38281,
+                    slotName: Core.data.slot_name,
+                    password: (Core.data.password != "") ? Core.data.password : null
+                );
+
+            result.Visit(
+                ifSuccess: (ServerConnection connection) => {  },
+                ifFailure: () =>
+                {
+                    Authenticated = false;
+                    HintMode = false;
+                    Core.Logger.LogError(String.Join("\n", failure.Errors));
+                    ConfigManager.connectionInfo.text = String.Join("\n", failure.Errors);
+                    Session.Socket.DisconnectAsync();
+                    Session = null;
+                    UIManager.menuIcon.GetComponent<Image>().color = Colors.Red;
+                }
+            );
+
             Session = ArchipelagoSessionFactory.CreateSession(Core.data.host_name);
             Session.Socket.SocketClosed += SocketClosed;
             Session.Socket.ErrorReceived += ErrorReceived;

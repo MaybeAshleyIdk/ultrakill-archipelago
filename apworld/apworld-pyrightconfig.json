@@ -1,0 +1,11 @@
+{
+	"include": ["src"],
+
+	"typeCheckingMode": "strict",
+	"reportImplicitOverride": "error",
+	"reportMissingImports": true,
+	"reportMissingTypeStubs": true,
+
+	"pythonVersion": "3.11",
+	"pythonPlatform": "All"
+}
