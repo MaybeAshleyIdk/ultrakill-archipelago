@@ -112,64 +112,6 @@ namespace ArchipelagoULTRAKILL
             serverCheckBlocker.SetActive(true);
         }
 
-        public static void TryGetStart(ref HashSet<string> unlockedLevels, Dictionary<string, object> slotData, string defaultValue)
-        {
-            try 
-            { 
-                unlockedLevels.Add(slotData["start"].ToString());
-                Core.data.start = slotData["start"].ToString();
-            }
-            catch (KeyNotFoundException)
-            {
-                Core.Logger.LogWarning($"No key found for start level. Using default value ({defaultValue})");
-                unlockedLevels.Add(defaultValue);
-                Core.data.start = defaultValue;
-            }
-        }
-
-        public static void TryGetGoal(ref string goal, Dictionary<string, object> slotData, string defaultValue)
-        {
-            if (int.TryParse(slotData["goal"].ToString(), out int goalNum))
-            {
-                Core.Logger.LogWarning("Using legacy goal option.");
-                switch (goalNum)
-                {
-                    case 0:
-                        goal = "1-4";
-                        break;
-                    case 1:
-                        goal = "2-4";
-                        break;
-                    case 2:
-                        goal = "3-2";
-                        break;
-                    case 3:
-                        goal = "4-4";
-                        break;
-                    case 4:
-                        goal = "5-4";
-                        break;
-                    case 6:
-                        goal = "P-1";
-                        break;
-                    case 7:
-                        goal = "P-2";
-                        break;
-                    case 8:
-                        goal = "7-4";
-                        break;
-                    case 5:
-                    default:
-                        goal = "6-2";
-                        break;
-                }
-            }
-            else
-            {
-                goal = slotData["goal"].ToString();
-            }
-        }
-
         public static void TryGetEnemyOption(ref EnemyOptions option, Dictionary<string, object> slotData, string key, EnemyOptions defaultValue)
         {
             try { option = (EnemyOptions)int.Parse(slotData[key].ToString()); }
@@ -281,6 +223,9 @@ namespace ArchipelagoULTRAKILL
                 SlotData slotData = SlotData.FromLoginResult(success, Core.Logger);
 
                 Core.data.version = slotData.Version;
+                Core.data.unlockedLevels.Add(slotData.Start);
+                Core.data.start = slotData.Start;
+                Core.data.goal = slotData.Goal;
                 Core.data.goalRequirement = slotData.GoalRequirement;
                 Core.data.perfectGoal = slotData.PerfectGoal;
                 Core.data.challengeRewards = slotData.ChallengeRewards;
@@ -295,9 +240,6 @@ namespace ArchipelagoULTRAKILL
                 Core.data.l1switch = slotData.RandomizeLimboSwitches;
                 Core.data.l7switch = slotData.RandomizeViolenceSwitches;
 #nullable restore
-
-                TryGetStart(ref Core.data.unlockedLevels, success.SlotData, "0-1");
-                TryGetGoal(ref Core.data.goal, success.SlotData, "6-2");
 
                 TryGetEnemyOption(ref Core.data.enemyRewards, success.SlotData, "enemy_rewards", EnemyOptions.Disabled);
                 TryGetFire2(ref Core.data.randomizeFire2, success.SlotData, "randomize_secondary_fire", Fire2Options.Disabled);

@@ -450,6 +450,8 @@ class UltrakillWorld(World):
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data_typed = SlotData(
             version=VERSION,
+            start=self.start_level.short_name,
+            goal=self.goal_level.short_name,
             goal_requirement=self.options.goal_requirement.value,
             perfect_goal=bool(self.options.perfect_goal),
             challenge_rewards=bool(self.options.challenge_rewards),
@@ -476,8 +478,6 @@ class UltrakillWorld(World):
 
         slot_data: Dict[str, Any] = {
             "locations": self.game_id_to_long,
-            "start": self.start_level.short_name,
-            "goal": self.goal_level.short_name,
             "skipped_levels": self.options.skipped_levels.value,
             "enemy_rewards": self.options.enemy_rewards.value,
             "randomize_secondary_fire": self.options.randomize_secondary_fire.value,
