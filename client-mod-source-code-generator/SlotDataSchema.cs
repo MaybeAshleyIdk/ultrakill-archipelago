@@ -185,15 +185,35 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 
 		private sealed class PartialStringEntry : PartialEntry
 		{
+			private string fallbackValue = null;
+
 			public PartialStringEntry(string key) : base(key)
 			{
 			}
 
-			public override bool InitProperty(string name, string value) => false;
+			public override bool InitProperty(string name, string value)
+			{
+				if (name != PropertyNames.FallbackValue)
+				{
+					return false;
+				}
+
+				if (!(this.fallbackValue is null)) return false;
+
+				if ((value.Length < 2) || !(value.StartsWith("\"")) || !(value.EndsWith("\"")))
+				{
+					return false;
+				}
+
+				this.fallbackValue = value.Substring(startIndex: 1, length: value.Length - 2);
+				return true;
+			}
 
 			public override SlotDataSchemaEntryTypeData ToTypeDataOrNull()
 			{
-				return new SlotDataSchemaEntryTypes.String();
+				if (this.fallbackValue is null) return null;
+
+				return new SlotDataSchemaEntryTypes.String(this.fallbackValue);
 			}
 		}
 

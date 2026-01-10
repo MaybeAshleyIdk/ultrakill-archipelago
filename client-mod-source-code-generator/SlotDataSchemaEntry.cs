@@ -67,6 +67,13 @@ namespace UltrakillArchipelago.SourceCodeGenerator
 		internal readonly struct String : SlotDataSchemaEntryTypeData
 		{
 			public string DotNetTypeName => "string";
+			public readonly string FallbackValue;
+
+			public String(string fallbackValue)
+			{
+				this.FallbackValue = fallbackValue
+					?? throw new ArgumentException(message: "Fallback value is null", paramName: nameof(fallbackValue));
+			}
 		}
 	}
 }

@@ -645,10 +645,18 @@ class SlotDataSchema:
 
 	@final
 	class _PartialStringEntry(_PartialEntry):
+		# The APWorld code does not make use of the fallback value property, but we still validate.
+		_is_fallback_initialized: bool = False
 
 		@override
 		def init_property(self, name: str, value: str) -> bool:
-			return False
+			if name != SlotDataSchema._PropertyNames.FALLBACK_VALUE.value:
+				return False
+
+			if self._is_fallback_initialized:
+				return False
+
+			return (len(value) >= 2) and value.startswith("\"") and value.endswith("\"")
 
 		@override
 		def to_type_data(self) -> SlotDataSchemaEntryTypeData | None:

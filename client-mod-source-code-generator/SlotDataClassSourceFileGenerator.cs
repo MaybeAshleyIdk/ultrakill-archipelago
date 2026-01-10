@@ -270,25 +270,26 @@ namespace {{NAMESPACE_NAME}}
 		private static string GetStringFromSlotDataDictionary(
 			global::System.Collections.Generic.Dictionary<string, object?> slotData,
 			string key,
+			string fallbackValue,
 			global::BepInEx.Logging.ManualLogSource logger
 		)
 		{
 			if (!(slotData.TryGetValue(key, out object? valueUntyped)))
 			{
 				string logMsg = $""The slot data does not contain an entry with the key \""{key}\"". "" +
-					""Falling back to an empty string."";
+					$""Falling back to {DisplayString(fallbackValue)}."";
 				logger.LogWarning(logMsg);
 
-				return """";
+				return fallbackValue;
 			}
 
 			if (valueUntyped is null)
 			{
 				string logMsg = $""The slot data entry with the key \""{key}\"" is null. "" +
-					""Falling back to an empty string."";
+					$""Falling back to {DisplayString(fallbackValue)}."";
 				logger.LogWarning(logMsg);
 
-				return """";
+				return fallbackValue;
 			}
 
 			if (!(valueUntyped is string value))
@@ -302,6 +303,17 @@ namespace {{NAMESPACE_NAME}}
 			}
 
 			return value;
+		}
+
+		private static string DisplayString(string str)
+		{
+			if (str == """")
+			{
+				return ""an empty string"";
+			}
+
+			string escaped = str.Replace(@""\"", @""\\"").Replace(""\"""", ""\\\"""");
+			return $""to the string \""{escaped}\"""";
 		}
 
 		#endregion
@@ -466,11 +478,16 @@ namespace {{NAMESPACE_NAME}}
 	);";
 							break;
 						}
-						case SlotDataSchemaEntryTypes.String _:
+						case SlotDataSchemaEntryTypes.String stringData:
 						{
 							// language=c#
-							code += $"GetStringFromSlotDataDictionary(slotData, key: \"{key}\", logger);";
-
+							code += $@"
+	GetStringFromSlotDataDictionary(
+		slotData,
+		key: ""{key}"",
+		fallbackValue: ""{stringData.FallbackValue}"",
+		logger
+	);";
 							break;
 						}
 						default: throw new Exception($"Unhandled entry type: {entry.TypeData.GetType()}");
