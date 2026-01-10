@@ -848,6 +848,11 @@ class SlotDataClassSourceFileTarget(Target):
 			slot_data_source_file.write("\tdef __post_init__(self):\n")
 
 			for key, entry in schema.items():
+				slot_data_source_file.write(
+					f"\t\tif not isinstance(self.{key}, {entry.type_data.get_python_type_name()}):\n"
+					f"\t\t\traise TypeError(\"{key} must be of type {entry.type_data.get_python_type_name()}\")\n",
+				)
+
 				match entry.type_data:
 					case SlotDataSchemaEntryTypes.Bool():
 						pass
@@ -857,14 +862,16 @@ class SlotDataClassSourceFileTarget(Target):
 							f"\t\tif (self.{key} < {min_value}) or (self.{key} > {max_value}):\n"
 							"\t\t\traise ValueError(\""
 							f"{key} must be in the range [{min_value}, {max_value}]"
-							"\")\n\n",
+							"\")\n",
 						)
 
 					case SlotDataSchemaEntryTypes.String():
 						slot_data_source_file.write(
 							f"\t\tif self.{key} == \"\":\n"
-							f"\t\t\traise ValueError(\"{key} must not be empty\")\n\n",
+							f"\t\t\traise ValueError(\"{key} must not be empty\")\n",
 						)
+
+				slot_data_source_file.write("\n")
 
 			slot_data_source_file.write(
 				"\tdef to_mapping(self) -> Mapping[str, Any]:\n"
